@@ -1,5 +1,3 @@
-document.documentElement.classList.add('js');
-
 // Header-Schatten beim Scrollen
 const header = document.getElementById('header');
 const onScroll = () => header.classList.toggle('is-scrolled', scrollY > 40);
@@ -31,64 +29,76 @@ if ('IntersectionObserver' in window) {
   reveals.forEach(el => el.classList.add('is-in'));
 }
 
-// Kontaktformular
+// Kontaktformular – Versand serverseitig über /api/contact
 const form = document.getElementById('contact-form');
 if (form) {
+  form.noValidate = true; // eigene, freundlichere Prüfung statt Browser-Blasen
+  form.elements._t.value = Date.now();
+
   // Vorbelegen aus dem Schnellformular / Leistungsseiten (?leistung=…&objekt=…&ort=…)
-  const params = new URLSearchParams(location.search);
-  for (const [k, v] of params) {
+  for (const [k, v] of new URLSearchParams(location.search)) {
     const el = form.elements[k];
-    if (!el) continue;
+    if (!el || k.startsWith('_') || el.type === 'checkbox') continue;
     if (el.tagName === 'SELECT' && ![...el.options].some(o => (o.value || o.text) === v)) continue;
-    el.value = v;
+    el.value = v.slice(0, 200);
   }
 
   const status = document.getElementById('form-status');
-  const label = name => {
-    const el = form.elements[name];
-    if (el.tagName !== 'SELECT') return el.value.trim();
-    return el.options[el.selectedIndex].text;
-  };
+  const success = document.getElementById('form-success');
+  const button = form.querySelector('button[type="submit"]');
+  const buttonHtml = button.innerHTML;
+  const fallback = 'Ihre Anfrage konnte gerade nicht gesendet werden. Bitte versuchen Sie es später erneut oder rufen Sie uns an.';
+
+  const setStatus = (type, text) => { status.className = `form-status is-${type}`; status.textContent = text; };
+  const markInvalid = (el, invalid) => (el.closest('.field') || el.closest('.consent'))?.classList.toggle('is-invalid', invalid);
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
-    let ok = true;
+    if (form.dataset.busy) return;
+
+    let first = null;
     for (const el of form.querySelectorAll('[required]')) {
-      const valid = el.type === 'checkbox' ? el.checked : el.checkValidity() && el.value.trim() !== '';
-      (el.closest('.field') || el.closest('.consent')).classList.toggle('is-invalid', !valid);
-      if (!valid && ok) { el.focus(); ok = false; }
+      const valid = el.type === 'checkbox' ? el.checked : el.value.trim() !== '' && el.checkValidity();
+      markInvalid(el, !valid);
+      if (!valid && !first) first = el;
     }
-    if (!ok) {
-      status.className = 'form-status is-error';
-      status.textContent = 'Bitte füllen Sie die markierten Pflichtfelder aus.';
-      return;
+    if (first) {
+      first.focus();
+      return setStatus('error', 'Bitte füllen Sie die markierten Pflichtfelder aus.');
     }
 
-    const data = {
-      Leistung: label('leistung'), Objekt: label('objekt'), Ort: label('ort'), Rhythmus: label('rhythmus'),
-      Name: label('name'), Firma: label('firma'), Telefon: label('telefon'), 'E-Mail': label('email'), Nachricht: label('nachricht'),
-    };
+    const data = Object.fromEntries(new FormData(form));
+    data.consent = form.elements.consent.checked;
 
-    if (form.dataset.endpoint) {
-      try {
-        const res = await fetch(form.dataset.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(data) });
-        if (!res.ok) throw new Error(res.status);
-        form.reset();
-        status.className = 'form-status is-ok';
-        status.textContent = 'Vielen Dank! Ihre Anfrage ist bei uns eingegangen – wir melden uns schnellstmöglich.';
-      } catch {
-        status.className = 'form-status is-error';
-        status.textContent = 'Das hat leider nicht geklappt. Bitte rufen Sie uns an oder schreiben Sie per WhatsApp.';
+    form.dataset.busy = '1';
+    button.disabled = true;
+    button.textContent = 'Wird gesendet …';
+    setStatus('info', '');
+
+    try {
+      const res = await fetch(form.dataset.endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok || !result.ok) {
+        for (const name of Object.keys(result.fields || {})) if (form.elements[name]) markInvalid(form.elements[name], true);
+        throw new Error(result.error || fallback);
       }
-      return;
+      form.hidden = true;
+      success.hidden = false;
+      success.focus();
+      success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err) {
+      setStatus('error', err instanceof TypeError ? 'Keine Verbindung – bitte prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.' : err.message);
+    } finally {
+      delete form.dataset.busy;
+      button.disabled = false;
+      button.innerHTML = buttonHtml;
     }
-
-    // Ohne Endpunkt: E-Mail-Programm mit vorausgefüllter Nachricht öffnen
-    const body = Object.entries(data).filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`).join('\n');
-    location.href = `mailto:${form.dataset.mail}?subject=${encodeURIComponent(`Anfrage: ${data.Leistung}`)}&body=${encodeURIComponent(body)}`;
-    status.className = 'form-status is-ok';
-    status.textContent = 'Ihr E-Mail-Programm wurde geöffnet – bitte senden Sie die Nachricht dort ab.';
   });
 
   form.addEventListener('input', e => e.target.closest('.is-invalid')?.classList.remove('is-invalid'));
+  form.addEventListener('change', e => e.target.closest('.is-invalid')?.classList.remove('is-invalid'));
 }

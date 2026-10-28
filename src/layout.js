@@ -4,6 +4,8 @@ import { icon } from './icons.js';
 export const tel = `tel:${c.phone}`;
 export const wa = `https://wa.me/${c.whatsapp}`;
 export const mail = `mailto:${c.email}`;
+export const isPlaceholder = v => !v || /\[.*\]/.test(v);
+export const ownerName = () => (isPlaceholder(c.owner) ? c.legalName : c.owner);
 export const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 // ── Bausteine ───────────────────────────────────────────────
@@ -130,7 +132,7 @@ const footer = () => `
           <li>${icon('mail')}<a href="${mail}">${c.email}</a></li>
           <li>${icon('wa')}<a href="${wa}" target="_blank" rel="noopener">WhatsApp schreiben</a></li>
           <li>${icon('clock')}<span>${c.hours}</span></li>
-          <li>${icon('pin')}<span>${c.street}<br>${c.zip} ${c.city}</span></li>
+          <li>${icon('pin')}<span>${isPlaceholder(c.street) ? `${c.city} &amp; Umgebung · OWL` : `${c.street}<br>${c.zip} ${c.city}`}</span></li>
         </ul>
       </div>
     </div>
@@ -173,40 +175,71 @@ export const faqList = items => `
 // ── Seitengerüst ────────────────────────────────────────────
 
 export const layout = ({ path, title, description, active, body, schema = [], noindex = false, v }) => {
-  const url = c.siteUrl ? c.siteUrl.replace(/\/$/, '') + (path === '/' ? '' : path) : '';
-  const ld = [{
+  const site = c.siteUrl.replace(/\/$/, '');
+  const url = site + (path === '/' ? '/' : path);
+  const hasAddress = !isPlaceholder(c.street) && !isPlaceholder(c.zip);
+  const business = {
     '@context': 'https://schema.org',
     '@type': 'HousekeepingService',
+    '@id': `${site}/#organization`,
     name: c.legalName,
+    alternateName: c.name,
     slogan: c.tagline,
+    url: `${site}/`,
+    logo: `${site}/assets/logo-full.png`,
+    image: `${site}/assets/og-image.jpg`,
     telephone: c.phone,
     email: c.email,
+    priceRange: '€€',
+    address: {
+      '@type': 'PostalAddress',
+      ...(hasAddress ? { streetAddress: c.street, postalCode: c.zip } : {}),
+      addressLocality: c.city, addressRegion: 'Nordrhein-Westfalen', addressCountry: 'DE',
+    },
     areaServed: c.towns.map(t => ({ '@type': 'City', name: t })),
-    address: { '@type': 'PostalAddress', addressLocality: c.city, addressRegion: 'NRW', addressCountry: 'DE' },
-    ...(c.siteUrl ? { url: c.siteUrl, logo: c.siteUrl.replace(/\/$/, '') + '/assets/logo-full.png' } : {}),
-  }, ...schema];
+    openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '07:00', closes: '18:00' }],
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog', name: 'Leistungen',
+      itemListElement: services.map(s => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: s.title, url: `${site}/leistungen/${s.slug}` } })),
+    },
+    ...(isPlaceholder(c.owner) ? {} : { founder: { '@type': 'Person', name: c.owner } }),
+  };
+  const website = { '@context': 'https://schema.org', '@type': 'WebSite', '@id': `${site}/#website`, name: c.legalName, url: `${site}/`, inLanguage: 'de-DE', publisher: { '@id': `${site}/#organization` } };
+  const ld = [business, ...(path === '/' ? [website] : []), ...schema];
 
   return `<!doctype html>
 <html lang="de">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>${esc(title)}</title>
   <meta name="description" content="${esc(description)}">
-  ${noindex ? '<meta name="robots" content="noindex">' : ''}
-  ${url ? `<link rel="canonical" href="${url}">` : ''}
+  <meta name="robots" content="${noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1'}">
+  <link rel="canonical" href="${url}">
   <meta name="theme-color" content="#0b3a78">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="geo.region" content="DE-NW">
+  <meta name="geo.placename" content="${c.city}">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="de_DE">
   <meta property="og:site_name" content="${esc(c.legalName)}">
   <meta property="og:title" content="${esc(title)}">
   <meta property="og:description" content="${esc(description)}">
-  ${c.siteUrl ? `<meta property="og:url" content="${url}"><meta property="og:image" content="${c.siteUrl.replace(/\/$/, '')}/assets/og-image.jpg">` : ''}
+  <meta property="og:url" content="${url}">
+  <meta property="og:image" content="${site}/assets/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="${esc(c.legalName)} Logo">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
   <link rel="preload" href="/assets/fonts/montserrat-800.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/site.css?v=${v}">
-  <script type="application/ld+json">${JSON.stringify(ld.length === 1 ? ld[0] : ld)}</script>
+  <script>document.documentElement.classList.add('js')</script>
+  <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\u003c')}</script>
 </head>
 <body>
   <a class="skip" href="#main">Zum Inhalt springen</a>

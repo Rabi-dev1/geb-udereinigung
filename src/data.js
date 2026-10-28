@@ -10,10 +10,10 @@ export const company = {
   ownerInitials: 'OG',
   ownerRole: 'Inhaber',
 
-  phone: '+490000000000',          // für tel:-Links, ohne Leerzeichen
-  phoneDisplay: '0000 0000000',     // so wird die Nummer angezeigt
-  whatsapp: '490000000000',         // für wa.me – Ländervorwahl ohne +
-  email: 'info@example.de',
+  phone: '+4917671216622',         // für tel:-Links, ohne Leerzeichen
+  phoneDisplay: '0176 71216622',    // so wird die Nummer angezeigt
+  whatsapp: '4917671216622',        // für wa.me – Ländervorwahl ohne +
+  email: 'info@ostwestglanz.de',
 
   street: '[Straße Hausnummer]',
   zip: '[PLZ]',
@@ -24,10 +24,10 @@ export const company = {
   region: 'Bielefeld & Umgebung · OWL',
   towns: ['Bielefeld', 'Gütersloh', 'Herford', 'Bad Salzuflen', 'Halle (Westf.)', 'Oerlinghausen', 'Leopoldshöhe', 'Steinhagen', 'Werther', 'Verl'],
 
-  // Optional: echte Domain (z. B. https://www.ostwest-glanz.de) – aktiviert Sitemap, Canonical & Vorschaubild
-  siteUrl: '',
-  // Optional: Formular-Endpunkt (z. B. Formspree). Leer = Formular öffnet das E-Mail-Programm.
-  formEndpoint: '',
+  // Live-Domain – aktiviert Sitemap, Canonical-Links & Vorschaubilder
+  siteUrl: 'https://www.ostwestglanz.de',
+  // Serverseitiger Versand der Kontaktanfragen (siehe api/contact.js)
+  formEndpoint: '/api/contact',
 };
 
 export const objectTypes = ['Mehrfamilienhaus / Wohnanlage', 'Büro / Gewerbe', 'Arztpraxis', 'Parkhaus / Parkplatz', 'Sonstiges'];
@@ -122,7 +122,7 @@ export const services = [
     slug: 'parkhaus-und-parkplatzreinigung',
     icon: 'parking',
     title: 'Parkhaus- und Parkplatzreinigung',
-    short: 'Saubere Park- und Verkehrsflächen – frei von Schmutz, Laub und Müll.',
+    short: 'Saubere Parkflächen – frei von Schmutz, Laub und Müll.',
     intro: 'Gepflegte Parkflächen sind sicherer und hinterlassen bei Kunden, Mietern und Mitarbeitenden einen guten Eindruck. Wir halten sie dauerhaft sauber.',
     includes: [
       'Fahrbahnen und Stellflächen kehren',

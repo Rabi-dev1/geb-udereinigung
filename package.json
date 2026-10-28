@@ -6,5 +6,10 @@
     "build": "node build.js",
     "dev": "node dev.js"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "nodemailer": "6.9.16"
+  }
 }

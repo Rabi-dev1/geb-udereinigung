@@ -1,6 +1,6 @@
 import { company as c, services, objectTypes, intervals, generalFaq } from './data.js';
 import { icon } from './icons.js';
-import { tel, wa, mail, pageHero, ctaBand, faqList } from './layout.js';
+import { tel, wa, mail, pageHero, ctaBand, faqList, isPlaceholder, ownerName } from './layout.js';
 
 const serviceOptions = (selected = '') => services.map(s => `<option value="${s.slug}"${s.slug === selected ? ' selected' : ''}>${s.title}</option>`).join('') + `<option value="sonstiges">Sonstiges / Mehrere Leistungen</option>`;
 const options = list => list.map(o => `<option>${o}</option>`).join('');
@@ -8,6 +8,12 @@ const options = list => list.map(o => `<option>${o}</option>`).join('');
 const faqSchema = items => ({
   '@context': 'https://schema.org', '@type': 'FAQPage',
   mainEntity: items.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+});
+
+const site = c.siteUrl.replace(/\/$/, '');
+const breadcrumb = items => ({
+  '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+  itemListElement: [['Start', '/'], ...items].map(([name, path], i) => ({ '@type': 'ListItem', position: i + 1, name, item: site + path })),
 });
 
 const trust = [
@@ -41,8 +47,8 @@ const personCard = () => `
   <aside class="person">
     <div class="person__avatar" aria-hidden="true">${c.ownerInitials}</div>
     <div class="person__body">
-      <p class="person__role">${c.ownerRole} · Ihr Ansprechpartner</p>
-      <p class="person__name">${c.owner}</p>
+      <p class="person__role">${isPlaceholder(c.owner) ? 'Persönlich für Sie da' : `${c.ownerRole} · Ihr Ansprechpartner`}</p>
+      <p class="person__name">${ownerName()}</p>
       <p class="person__quote">„Bei uns haben Sie eine feste Person, die Ihr Objekt kennt und für Sie erreichbar ist.“</p>
       <div class="person__links">
         <a href="${tel}">${icon('phone', 'i i--sm')} ${c.phoneDisplay}</a>
@@ -54,15 +60,15 @@ const personCard = () => `
 // ── Startseite ──────────────────────────────────────────────
 const home = () => ({
   path: '/', file: 'index.html', active: 'start',
-  title: `${c.legalName} | Gebäudereinigung in Bielefeld & OWL`,
-  description: 'Treppenhaus-, Keller-, Fenster-, Büro- und Praxisreinigung, Parkhaus- und Parkplatzreinigung sowie Mülltonnenservice in Bielefeld und OWL. Kostenlose Besichtigung & Festpreis-Angebot.',
+  title: `Gebäudereinigung Bielefeld & OWL | ${c.name}`,
+  description: 'Gebäudereinigung in Bielefeld & OWL: Treppenhaus, Büro, Praxis, Fenster, Keller, Parkplatz & Mülltonnenservice. Kostenlose Besichtigung, fester Preis.',
   body: `
   <section class="hero">
     <svg class="hero__swoosh" viewBox="0 0 900 360" aria-hidden="true"><path d="M-40 300C180 400 700 380 940 90" fill="none" stroke="#1a6fd1" stroke-width="26" stroke-linecap="round"/><path d="M60 345C300 405 720 360 930 180" fill="none" stroke="#4aa52e" stroke-width="14" stroke-linecap="round"/></svg>
     <div class="container hero__grid">
       <div class="hero__content">
-        <p class="pill"><span class="pill__dot"></span> Ihr Reinigungsservice aus Bielefeld</p>
-        <h1 class="hero__title">Sauber.<br>Zuverlässig.<br><span class="text-green">Professionell.</span></h1>
+        <p class="pill"><span class="pill__dot"></span> Kostenlose Besichtigung · Festpreis-Angebot</p>
+        <h1 class="hero__title"><span class="hero__kicker">Gebäudereinigung in Bielefeld &amp; OWL</span>Sauber.<br>Zuverlässig.<br><span class="text-green">Professionell.</span></h1>
         <p class="lead">Wir reinigen Treppenhäuser, Büros, Praxen und Parkflächen in Bielefeld und ganz Ostwestfalen-Lippe – mit fester Ansprechperson und fairen Festpreisen.</p>
         <div class="actions">
           <a href="/kontakt" class="btn btn--primary btn--lg">Kostenloses Angebot ${icon('arrow', 'i i--sm')}</a>
@@ -174,8 +180,9 @@ const home = () => ({
 // ── Leistungen (Übersicht) ──────────────────────────────────
 const leistungen = () => ({
   path: '/leistungen', file: 'leistungen/index.html', active: 'leistungen',
-  title: `Leistungen | ${c.legalName} Bielefeld`,
-  description: 'Alle Leistungen von OstWest Glanz im Überblick: Treppenhaus-, Keller-, Fenster-, Büro- und Praxisreinigung, Parkhaus- und Parkplatzreinigung, Mülltonnenservice und Gebäudereinigung.',
+  title: `Leistungen der Gebäudereinigung in Bielefeld | ${c.name}`,
+  description: 'Alle Leistungen von OstWest Glanz: Treppenhaus-, Keller-, Fenster-, Büro- & Praxisreinigung, Parkplatzreinigung und Mülltonnenservice in Bielefeld & OWL.',
+  schema: [breadcrumb([['Leistungen', '/leistungen']])],
   body: `
   ${pageHero({
     crumbs: [['Leistungen']],
@@ -204,9 +211,9 @@ const leistungen = () => ({
 // ── Leistungs-Detailseiten ──────────────────────────────────
 const servicePage = s => ({
   path: `/leistungen/${s.slug}`, file: `leistungen/${s.slug}.html`, active: 'leistungen',
-  title: `${s.title} in Bielefeld & OWL | ${c.name}`,
-  description: `${s.title} in Bielefeld und OWL: ${s.short} Kostenlose Besichtigung und Festpreis-Angebot von ${c.legalName}.`,
-  schema: [faqSchema(s.faq), {
+  title: `${s.title} in Bielefeld | ${c.name}`,
+  description: `${s.title} in Bielefeld & OWL: ${s.short} Kostenlose Besichtigung & Festpreis-Angebot.`,
+  schema: [faqSchema(s.faq), breadcrumb([['Leistungen', '/leistungen'], [s.title, `/leistungen/${s.slug}`]]), {
     '@context': 'https://schema.org', '@type': 'Service', serviceType: s.title,
     provider: { '@type': 'HousekeepingService', name: c.legalName }, areaServed: 'Bielefeld, Ostwestfalen-Lippe', description: s.intro,
   }],
@@ -273,8 +280,9 @@ const servicePage = s => ({
 // ── Über uns ────────────────────────────────────────────────
 const ueberUns = () => ({
   path: '/ueber-uns', file: 'ueber-uns.html', active: 'ueber-uns',
-  title: `Über uns | ${c.legalName}`,
+  title: `Über uns – Reinigungsfirma aus Bielefeld | ${c.name}`,
   description: 'OstWest Glanz ist ein junges Reinigungsunternehmen aus Bielefeld. Persönlich, zuverlässig und mit klaren Festpreisen – für Objekte in ganz OWL.',
+  schema: [breadcrumb([['Über uns', '/ueber-uns']])],
   body: `
   ${pageHero({
     crumbs: [['Über uns']],
@@ -324,9 +332,9 @@ const ueberUns = () => ({
 // ── Kontakt ─────────────────────────────────────────────────
 const kontakt = () => ({
   path: '/kontakt', file: 'kontakt.html', active: 'kontakt',
-  title: `Kontakt & Angebot | ${c.legalName}`,
+  title: `Kontakt & kostenloses Angebot | ${c.name}`,
   description: 'Jetzt kostenloses Angebot für Ihre Gebäudereinigung in Bielefeld und OWL anfragen – per Formular, Telefon oder WhatsApp.',
-  schema: [faqSchema(generalFaq)],
+  schema: [faqSchema(generalFaq), breadcrumb([['Kontakt', '/kontakt']])],
   body: `
   ${pageHero({
     crumbs: [['Kontakt']],
@@ -336,7 +344,9 @@ const kontakt = () => ({
   })}
   <section class="section section--tight">
     <div class="container contact">
-      <form class="form-card" id="contact-form" novalidate data-endpoint="${c.formEndpoint}" data-mail="${c.email}">
+      <form class="form-card" id="contact-form" action="${c.formEndpoint}" method="post" data-endpoint="${c.formEndpoint}">
+        <div class="hp" aria-hidden="true"><label>Bitte leer lassen<input name="_hp" tabindex="-1" autocomplete="off"></label></div>
+        <input type="hidden" name="_t" value="">
         <fieldset>
           <legend><span class="legend__num">1</span> Ihr Objekt</legend>
           <div class="form-grid">
@@ -360,6 +370,12 @@ const kontakt = () => ({
         <button class="btn btn--primary btn--lg btn--block" type="submit">Anfrage absenden ${icon('arrow', 'i i--sm')}</button>
         <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
       </form>
+      <div class="form-success" id="form-success" hidden tabindex="-1">
+        <span class="form-success__icon">${icon('check')}</span>
+        <h2>Vielen Dank für Ihre Anfrage!</h2>
+        <p>Ihre Nachricht ist bei uns eingegangen. Wir melden uns schnellstmöglich bei Ihnen und vereinbaren einen Termin.</p>
+        <p class="small-muted">Eilig? Rufen Sie uns direkt an: <a href="${tel}">${c.phoneDisplay}</a></p>
+      </div>
 
       <aside class="contact__side">
         <div class="contact-card">
@@ -413,6 +429,23 @@ const datenschutz = () => legal('/datenschutz', 'datenschutz.html', 'Datenschutz
   <h2>5. Ihre Rechte</h2>
   <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch sowie das Recht auf Beschwerde bei einer Aufsichtsbehörde.</p>`);
 
+const statusPage = (path, file, title, h1, text, ok) => ({
+  path, file, title: `${title} | ${c.name}`, description: title, noindex: true,
+  body: `
+  <section class="section notfound">
+    <div class="container narrow">
+      <span class="status-icon${ok ? '' : ' status-icon--error'}">${icon(ok ? 'check' : 'close')}</span>
+      <h1>${h1}</h1>
+      <p class="lead">${text}</p>
+      <div class="actions actions--center">
+        <a href="${tel}" class="btn btn--primary">${icon('phone', 'i i--sm')} ${c.phoneDisplay}</a>
+        <a href="${wa}" class="btn btn--ghost" target="_blank" rel="noopener">${icon('wa', 'i i--sm')} WhatsApp</a>
+        <a href="/" class="btn btn--ghost">Zur Startseite</a>
+      </div>
+    </div>
+  </section>`,
+});
+
 const notFound = () => ({
   path: '/404', file: '404.html', noindex: true,
   title: `Seite nicht gefunden | ${c.name}`, description: 'Diese Seite existiert nicht.',
@@ -427,4 +460,6 @@ const notFound = () => ({
   </section>`,
 });
 
-export const pages = () => [home(), leistungen(), ...services.map(servicePage), ueberUns(), kontakt(), impressum(), datenschutz(), notFound()];
+export const pages = () => [home(), leistungen(), ...services.map(servicePage), ueberUns(), kontakt(), impressum(), datenschutz(), notFound(),
+  statusPage('/danke', 'danke.html', 'Anfrage gesendet', 'Vielen Dank für Ihre Anfrage!', 'Ihre Nachricht ist bei uns eingegangen. Wir melden uns schnellstmöglich bei Ihnen und vereinbaren einen Termin.', true),
+  statusPage('/anfrage-fehlgeschlagen', 'anfrage-fehlgeschlagen.html', 'Anfrage nicht gesendet', 'Ihre Anfrage konnte nicht gesendet werden.', 'Bitte prüfen Sie Ihre Angaben oder erreichen Sie uns direkt per Telefon oder WhatsApp.', false)];
