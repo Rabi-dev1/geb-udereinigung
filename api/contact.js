@@ -13,11 +13,19 @@ const LIMITS = { name: 100, firma: 120, telefon: 40, email: 200, ort: 100, nachr
 const EMAIL_RE = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[a-z]{2,}$/i;
 const ALLOWED_HOSTS = [/^(www\.)?ostwestglanz\.de$/, /\.vercel\.app$/, /^localhost(:\d+)?$/, /^127\.0\.0\.1(:\d+)?$/];
 
-// Einfache Drossel pro Instanz: max. 5 Anfragen je IP in 10 Minuten
+// Einfache Drossel pro Instanz: max. 5 Anfragen je IP in 10 Minuten.
+// IP-Adressen werden nur im Arbeitsspeicher gehalten und nach Ablauf des Fensters verworfen
+// (siehe Datenschutzerklärung, Abschnitt „Kontakt- und Angebotsformular“).
+const WINDOW_MS = 10 * 60 * 1000;
 const hits = new Map();
+let lastSweep = 0;
 function rateLimited(ip) {
-  const now = Date.now(), windowMs = 10 * 60 * 1000;
-  const list = (hits.get(ip) || []).filter(t => now - t < windowMs);
+  const now = Date.now();
+  if (now - lastSweep > 60 * 1000) {
+    for (const [key, times] of hits) if (now - times[times.length - 1] >= WINDOW_MS) hits.delete(key);
+    lastSweep = now;
+  }
+  const list = (hits.get(ip) || []).filter(t => now - t < WINDOW_MS);
   list.push(now);
   hits.set(ip, list);
   if (hits.size > 5000) hits.clear();

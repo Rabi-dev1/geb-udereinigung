@@ -1,4 +1,4 @@
-import { company as c, services } from './data.js';
+import { company as c, services, serviceGroups, audiencePage, regularPage } from './data.js';
 import { icon } from './icons.js';
 
 export const tel = `tel:${c.phone}`;
@@ -27,21 +27,41 @@ const topbar = () => `
     </div>
   </div>`;
 
-const header = active => `
+const header = active => {
+  const cur = key => (active === key ? ' aria-current="page"' : '');
+  const group = g => `
+              <div class="mega__col">
+                <p class="mega__heading">${g.title}</p>
+                ${services.filter(s => s.group === g.id).map(s => `
+                <a href="/leistungen/${s.slug}" class="mega__link">
+                  <span class="mega__icon">${icon(s.icon)}</span>
+                  <span><b>${s.title}</b></span>
+                </a>`).join('')}
+              </div>`;
+  return `
   <header class="header" id="header">
     <div class="container header__inner">
       ${brand()}
       <nav class="nav" aria-label="Hauptnavigation">
-        <a href="/" class="nav__link"${active === 'start' ? ' aria-current="page"' : ''}>Start</a>
         <div class="nav__item">
-          <a href="/leistungen" class="nav__link"${active === 'leistungen' ? ' aria-current="page"' : ''} aria-haspopup="true">Leistungen ${icon('chevron', 'i i--sm')}</a>
+          <a href="/leistungen" class="nav__link"${cur('leistungen')} aria-haspopup="true">Leistungen ${icon('chevron', 'i i--sm')}</a>
           <div class="mega">
             <div class="mega__grid">
-              ${services.map(s => `
-              <a href="/leistungen/${s.slug}" class="mega__link">
-                <span class="mega__icon">${icon(s.icon)}</span>
-                <span><b>${s.title}</b><small>${s.short}</small></span>
-              </a>`).join('')}
+              ${serviceGroups.map(group).join('')}
+              <div class="mega__col mega__col--feature">
+                <a href="${audiencePage.path}" class="mega__feature mega__feature--navy">
+                  <span class="mega__feature-icon">${icon('building')}</span>
+                  <b>${audiencePage.title}</b>
+                  <small>Reinigungslösungen für Gewerbe, Praxen und Wohnanlagen.</small>
+                  <span class="mega__feature-more">Mehr erfahren ${icon('arrow', 'i i--sm')}</span>
+                </a>
+                <a href="${regularPage.path}" class="mega__feature">
+                  <span class="mega__feature-icon">${icon('repeat')}</span>
+                  <b>${regularPage.title}</b>
+                  <small>Feste Intervalle, fester Plan, planbare Kosten.</small>
+                  <span class="mega__feature-more">Mehr erfahren ${icon('arrow', 'i i--sm')}</span>
+                </a>
+              </div>
             </div>
             <div class="mega__foot">
               <span>Nicht das Richtige dabei? Wir finden eine Lösung.</span>
@@ -49,8 +69,9 @@ const header = active => `
             </div>
           </div>
         </div>
-        <a href="/ueber-uns" class="nav__link"${active === 'ueber-uns' ? ' aria-current="page"' : ''}>Über uns</a>
-        <a href="/kontakt" class="nav__link"${active === 'kontakt' ? ' aria-current="page"' : ''}>Kontakt</a>
+        <a href="${audiencePage.path}" class="nav__link"${cur('unternehmen')}>${audiencePage.navLabel}</a>
+        <a href="/ueber-uns" class="nav__link"${cur('ueber-uns')}>Über uns</a>
+        <a href="/kontakt" class="nav__link"${cur('kontakt')}>Kontakt</a>
       </nav>
       <div class="header__actions">
         <a href="${tel}" class="header__phone">
@@ -64,7 +85,7 @@ const header = active => `
   </header>
 
   <div class="drawer" id="drawer" hidden>
-    <div class="drawer__panel">
+    <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="Menü">
       <div class="drawer__head">
         ${brand()}
         <button class="burger" id="drawer-close" aria-label="Menü schließen">${icon('close')}</button>
@@ -72,9 +93,13 @@ const header = active => `
       <nav class="drawer__nav" aria-label="Mobile Navigation">
         <a href="/">Start</a>
         <a href="/leistungen">Leistungen</a>
+        ${serviceGroups.map(g => `
         <div class="drawer__sub">
-          ${services.map(s => `<a href="/leistungen/${s.slug}">${icon(s.icon)} ${s.title}</a>`).join('')}
-        </div>
+          <p class="drawer__heading">${g.title}</p>
+          ${services.filter(s => s.group === g.id).map(s => `<a href="/leistungen/${s.slug}">${icon(s.icon)} ${s.title}</a>`).join('')}
+        </div>`).join('')}
+        <a href="${audiencePage.path}">${audiencePage.title}</a>
+        <a href="${regularPage.path}">${regularPage.title}</a>
         <a href="/ueber-uns">Über uns</a>
         <a href="/kontakt">Kontakt</a>
       </nav>
@@ -87,6 +112,7 @@ const header = active => `
       </div>
     </div>
   </div>`;
+};
 
 export const ctaBand = (title = 'Lassen Sie uns über Ihr Objekt sprechen.', text = 'Kostenlose Besichtigung und ein unverbindliches Festpreis-Angebot – ganz ohne Risiko.') => `
   <section class="cta">
@@ -112,15 +138,17 @@ const footer = () => `
         <img src="/assets/logo-full-white.png" alt="${c.legalName}" width="190" height="127" loading="lazy">
         <p>${c.tagline}<br>Ihr Partner für Gebäudereinigung in Bielefeld und OWL.</p>
       </div>
+      ${serviceGroups.map(g => `
       <div>
-        <h3 class="footer__title">Leistungen</h3>
-        <ul class="footer__list">${services.map(s => `<li><a href="/leistungen/${s.slug}">${s.title}</a></li>`).join('')}</ul>
-      </div>
+        <h3 class="footer__title">${g.title}</h3>
+        <ul class="footer__list">${services.filter(s => s.group === g.id).map(s => `<li><a href="/leistungen/${s.slug}">${s.title}</a></li>`).join('')}</ul>
+      </div>`).join('')}
       <div>
         <h3 class="footer__title">Unternehmen</h3>
         <ul class="footer__list">
-          <li><a href="/">Start</a></li>
-          <li><a href="/leistungen">Leistungen</a></li>
+          <li><a href="${audiencePage.path}">${audiencePage.title}</a></li>
+          <li><a href="${regularPage.path}">${regularPage.title}</a></li>
+          <li><a href="/leistungen">Alle Leistungen</a></li>
           <li><a href="/ueber-uns">Über uns</a></li>
           <li><a href="/kontakt">Kontakt & Angebot</a></li>
         </ul>
@@ -138,7 +166,7 @@ const footer = () => `
     </div>
     <div class="container footer__bottom">
       <span>© ${new Date().getFullYear()} ${c.legalName}</span>
-      <nav aria-label="Rechtliches"><a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a></nav>
+      <nav aria-label="Rechtliches"><a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a><a href="/agb">AGB</a></nav>
     </div>
   </footer>
 
