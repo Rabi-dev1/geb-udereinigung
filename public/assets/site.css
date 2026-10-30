@@ -508,6 +508,7 @@ mark.ph { padding: 1px 6px; border-radius: 6px; background: #fff3cd; color: #7a5
 .footer__list--icons .i { width: 18px; height: 18px; margin-top: 2px; color: var(--green); }
 .footer__bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 20px 0 24px; border-top: 1px solid rgba(255, 255, 255, .08); font-size: .85rem; }
 .footer__bottom nav { display: flex; gap: 24px; }
+.footer__credit { color: #8796ab; }
 
 .mbar { display: none; }
 

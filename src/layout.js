@@ -164,7 +164,7 @@ const footer = () => `
       </div>
     </div>
     <div class="container footer__bottom">
-      <span>© ${new Date().getFullYear()} ${c.legalName}</span>
+      <span>© ${new Date().getFullYear()} ${c.legalName} <span class="footer__credit">· Made by Kundenpilot</span></span>
       <nav aria-label="Rechtliches"><a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a><a href="/agb">AGB</a></nav>
     </div>
   </footer>
