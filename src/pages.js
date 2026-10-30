@@ -1,5 +1,6 @@
 import { company as c, services, serviceGroups, objectTypes, intervals, generalFaq, audiencePage, regularPage } from './data.js';
 import { icon } from './icons.js';
+import { picture } from './images.js';
 import { tel, wa, mail, pageHero, ctaBand, faqList, isPlaceholder, ownerName } from './layout.js';
 
 const serviceOptions = (selected = '') => serviceGroups.map(g => `<optgroup label="${g.title}">${services.filter(s => s.group === g.id).map(s => `<option value="${s.slug}"${s.slug === selected ? ' selected' : ''}>${s.title}</option>`).join('')}</optgroup>`).join('') + `<option value="sonstiges">Sonstiges / Mehrere Leistungen</option>`;
@@ -18,280 +19,246 @@ const breadcrumb = items => ({
   itemListElement: [['Start', '/'], ...items].map(([name, path], i) => ({ '@type': 'ListItem', position: i + 1, name, item: site + path })),
 });
 
-const trust = [
-  ['search', 'Kostenlose Besichtigung', 'Wir kommen zu Ihnen'],
-  ['euro', 'Festpreis-Angebot', 'Transparent, ohne Überraschungen'],
-  ['user', 'Feste Ansprechperson', 'Direkt erreichbar'],
-  ['calendar', 'Flexible Zeiten', 'Passend zu Ihrem Betrieb'],
+const steps = [
+  ['Anfrage stellen', 'Per Formular, Telefon oder WhatsApp – ein paar Angaben zum Objekt genügen.'],
+  ['Objekt besichtigen', 'Wir kommen vorbei und klären, was gereinigt werden soll und wie oft.'],
+  ['Festpreis erhalten', 'Sie bekommen ein schriftliches Angebot mit festem Preis.'],
+  ['Reinigung starten', 'Wir beginnen zum vereinbarten Termin und nach festem Plan.'],
 ];
 
-const steps = [
-  ['Anfragen', 'Per Formular, Telefon oder WhatsApp – in wenigen Minuten erledigt.'],
-  ['Besichtigen', 'Wir schauen uns Ihr Objekt an und besprechen Ihre Wünsche.'],
-  ['Festpreis erhalten', 'Sie bekommen ein klares, unverbindliches Angebot.'],
-  ['Sauber starten', 'Wir legen los – pünktlich, gründlich, zuverlässig.'],
+const facts = [
+  ['Kostenlose Besichtigung', 'Wir sehen uns Ihr Objekt vor Ort an, bevor wir ein Angebot machen.'],
+  ['Transparente Festpreise', 'Sie erhalten einen festen Preis für den vereinbarten Leistungsumfang.'],
+  ['Fester Ansprechpartner', 'Sie sprechen direkt mit dem Inhaber – ohne Umwege über eine Hotline.'],
+  ['Flexible Reinigungszeiten', 'Früh morgens, abends oder am Wochenende – passend zu Ihrem Betrieb.'],
+];
+
+const homeServices = [
+  { title: 'Treppenhausreinigung', text: 'Treppen, Podeste, Eingänge und Briefkastenanlagen – im festen Rhythmus.', href: '/leistungen/treppenhausreinigung', image: 'treppenhaus' },
+  { title: 'Büro- und Praxisreinigung', text: 'Arbeitsplätze, Sanitärräume und Küchen – vor oder nach Ihren Öffnungszeiten.', href: '/leistungen/buero-und-praxisreinigung', image: 'buero' },
+  { title: 'Gebäudereinigung', text: 'Laufende Unterhaltsreinigung für Wohnanlagen und Gewerbeobjekte.', href: '/leistungen/gebaeudereinigung', image: 'gebaeude' },
+  { title: 'Grund- und Sonderreinigung', text: 'Grundreinigung, Bauendreinigung, Fenster- und Glasreinigung – einmalig oder nach Bedarf.', href: '/leistungen#sonderreinigung', image: 'sonderreinigung' },
 ];
 
 const audiences = [
   {
-    icon: 'home',
+    id: 'hausverwaltungen',
+    image: 'hausverwaltung',
     title: 'Hausverwaltungen & Eigentümergemeinschaften',
-    text: 'Wir halten Ihre Wohnanlagen dauerhaft gepflegt – verlässlich für Sie und Ihre Mieter.',
-    points: ['Treppenhaus-, Keller- und Außenflächenreinigung', 'Mülltonnenservice nach Abfuhrkalender', 'Abrechnung je Objekt – passend für die Betriebskostenabrechnung', 'Mehrere Objekte, eine feste Ansprechperson'],
+    text: 'Für Wohnanlagen übernehmen wir die laufende Pflege der Gemeinschaftsflächen. Sie geben den Rahmen vor, wir halten uns an den vereinbarten Plan – und Mieter haben einen gepflegten Eingang.',
+    points: ['Treppenhaus-, Keller- und Außenflächenreinigung', 'Mülltonnenservice nach Abfuhrkalender', 'Abrechnung auf Wunsch je Objekt – für die Betriebskostenabrechnung', 'Mehrere Objekte, ein Ansprechpartner'],
     services: ['treppenhausreinigung', 'muelltonnenservice', 'kellerreinigung', 'grundreinigung'],
   },
   {
-    icon: 'building',
+    id: 'unternehmen',
+    image: 'buero',
     title: 'Unternehmen, Büros & Praxen',
-    text: 'Saubere Räume für Ihr Team und Ihre Kunden – gereinigt dann, wenn es zu Ihrem Betrieb passt.',
-    points: ['Reinigung vor oder nach Ihren Öffnungszeiten', 'Schriftlicher Reinigungsplan mit festen Intervallen', 'Glas-, Fenster- und Grundreinigung aus einer Hand', 'Planbare monatliche Kosten'],
+    text: 'In Büros und Praxen reinigen wir dann, wenn der Betrieb ruht. Was wann gereinigt wird, legen wir gemeinsam in einem Reinigungsplan fest.',
+    points: ['Reinigung vor oder nach Ihren Öffnungszeiten', 'Schriftlicher Reinigungsplan mit festen Intervallen', 'Glas-, Fenster- und Grundreinigung aus einer Hand', 'Feste monatliche Kosten'],
     services: ['buero-und-praxisreinigung', 'glasreinigung', 'fensterreinigung', 'bauendreinigung'],
   },
 ];
 
-const benefits = [
-  ['user', 'Feste Ansprechperson', 'Ein direkter Draht statt Hotline – jemand, der Ihr Objekt kennt.'],
-  ['list', 'Schriftlicher Reinigungsplan', 'Klar festgehalten: welche Bereiche, wie oft, wann.'],
-  ['euro', 'Planbare Kosten', 'Festpreis bzw. monatliche Pauschale – ohne Überraschungen.'],
-  ['file', 'Übersichtliche Abrechnung', 'Auf Wunsch je Objekt getrennt ausgewiesen.'],
-  ['clock', 'Flexible Zeiten', 'Früh morgens, abends oder am Wochenende.'],
-  ['key', 'Sorgfältiger Umgang mit Schlüsseln', 'Übergabe gegen Quittung, sichere Verwahrung.'],
+const deliverables = [
+  ['Reinigungsplan', 'Welche Bereiche wie oft gereinigt werden, halten wir schriftlich fest. Änderungen stimmen wir gemeinsam ab.'],
+  ['Ansprechpartner', `${ownerName()} ist als Inhaber Ihr direkter Kontakt – telefonisch, per WhatsApp oder vor Ort.`],
+  ['Kosten', 'Festpreis für einmalige Leistungen, monatliche Pauschale für regelmäßige Aufträge.'],
+  ['Abrechnung', 'Eine Rechnung für alle Leistungen. Bei mehreren Objekten auf Wunsch getrennt ausgewiesen.'],
+  ['Reinigungszeiten', 'Früh morgens, abends oder am Wochenende – so, dass Ihr Betrieb nicht gestört wird.'],
+  ['Zugang & Schlüssel', 'Übergabe gegen Quittung, sorgfältige Verwahrung, vollständige Rückgabe bei Vertragsende.'],
 ];
 
 const b2bFaq = [
-  ['Betreuen Sie auch mehrere Objekte?', 'Ja. Ob eine Wohnanlage oder mehrere Standorte – Sie haben eine feste Ansprechperson und erhalten die Abrechnung auf Wunsch je Objekt.'],
+  ['Betreuen Sie auch mehrere Objekte?', 'Ja. Ob eine Wohnanlage oder mehrere Standorte – Sie haben einen Ansprechpartner und erhalten die Abrechnung auf Wunsch je Objekt.'],
   ['Sind die Reinigungskosten auf Mieter umlegbar?', 'Die Kosten der Gebäudereinigung zählen in der Regel zu den umlagefähigen Betriebskosten nach § 2 BetrKV. Wir weisen die Leistungen auf Wunsch je Objekt getrennt aus.'],
-  ['Wie lange läuft ein Reinigungsvertrag?', 'Laufzeit und Kündigungsfrist vereinbaren wir individuell und halten sie transparent im Angebot fest.'],
+  ['Wie lange läuft ein Reinigungsvertrag?', 'Laufzeit und Kündigungsfrist vereinbaren wir individuell und halten sie im Angebot fest.'],
   ['Wie wird der Zugang zum Objekt geregelt?', 'Schlüssel oder Zugangsmedien übernehmen wir gegen Quittung und verwahren sie sorgfältig. Bei Vertragsende geben wir sie vollständig zurück.'],
 ];
 
 const regularIntervals = [
-  ['Täglich', 'Täglich & mehrmals wöchentlich', 'Für Büros, Praxen und stark genutzte Bereiche.'],
-  ['Wöchentlich', 'Wöchentlich', 'Für Treppenhäuser, kleinere Büros und Ladenlokale.'],
-  ['14-täglich', '14-täglich', 'Für Wohnanlagen mit normaler Nutzung.'],
-  ['Monatlich', 'Monatlich', 'Für Keller, Fenster, Glas und Außenflächen.'],
+  ['Täglich', 'Täglich / mehrmals pro Woche', 'Büros, Praxen und stark genutzte Bereiche'],
+  ['Wöchentlich', 'Wöchentlich', 'Treppenhäuser, kleinere Büros, Ladenlokale'],
+  ['14-täglich', 'Alle 14 Tage', 'Wohnanlagen mit normaler Nutzung'],
+  ['Monatlich', 'Monatlich', 'Keller, Fenster, Glas und Außenflächen'],
 ];
 
 const regularSteps = [
-  ['Besichtigung', 'Wir sehen uns Ihr Objekt an und klären Ihre Anforderungen.'],
+  ['Besichtigung', 'Wir sehen uns das Objekt an und klären Ihre Anforderungen.'],
   ['Reinigungsplan', 'Wir halten fest, welche Bereiche wie oft gereinigt werden.'],
-  ['Feste Termine', 'Gereinigt wird zu festen Zeiten – mit fester Ansprechperson.'],
-  ['Laufende Abstimmung', 'Ändert sich Ihr Bedarf, passen wir den Plan gemeinsam an.'],
+  ['Feste Termine', 'Gereinigt wird zu festen Zeiten – Sie wissen immer, wann wir da sind.'],
+  ['Anpassung', 'Ändert sich Ihr Bedarf, passen wir den Plan gemeinsam an.'],
 ];
 
 const regularFaq = [
   ['Kann ich den Rhythmus später ändern?', 'Ja. Ändert sich Ihr Bedarf, passen wir Intervalle und Leistungsumfang gemeinsam an.'],
   ['Wie wird abgerechnet?', 'In der Regel über eine feste monatliche Pauschale auf Basis des vereinbarten Leistungsumfangs – so bleiben Ihre Kosten planbar.'],
   ['Was passiert, wenn ein Termin auf einen Feiertag fällt?', 'Dann stimmen wir rechtzeitig einen Ersatztermin mit Ihnen ab.'],
-  ['Wie lange läuft ein Reinigungsauftrag?', 'Laufzeit und Kündigungsfrist vereinbaren wir individuell und halten sie transparent im Angebot fest.'],
+  ['Wie lange läuft ein Reinigungsauftrag?', 'Laufzeit und Kündigungsfrist vereinbaren wir individuell und halten sie im Angebot fest.'],
+];
+
+const workingPrinciples = [
+  ['Erst ansehen, dann anbieten', 'Ein Angebot erstellen wir nach einer Besichtigung. So passt der Preis zum tatsächlichen Aufwand.'],
+  ['Schriftlich festgehalten', 'Leistungsumfang, Intervalle und Preis stehen im Angebot – und daran halten wir uns.'],
+  ['Ein direkter Draht', 'Sie erreichen den Inhaber persönlich, statt bei einer Zentrale anzurufen.'],
+  ['Nachbessern, wenn etwas nicht passt', 'Melden Sie uns Mängel – wir kommen und bessern nach.'],
 ];
 
 // ── Bausteine ───────────────────────────────────────────────
-const serviceCard = (s, h = 'h3') => `
-  <a href="/leistungen/${s.slug}" class="svc reveal">
-    <span class="svc__icon">${icon(s.icon)}</span>
-    <${h} class="svc__title">${s.title}</${h}>
-    <p class="svc__text">${s.short}</p>
-    <span class="svc__more">Mehr erfahren ${icon('arrow', 'i i--sm')}</span>
-  </a>`;
-
-const regularFeatureCard = () => `
-  <a href="${regularPage.path}" class="svc svc--feature reveal">
-    <span class="svc__icon">${icon('repeat')}</span>
-    <div class="svc--feature__body">
-      <p class="svc__eyebrow">Für dauerhaft gepflegte Objekte</p>
-      <h4 class="svc__title">Regelmäßige Reinigung</h4>
-      <p class="svc__text">Täglich, wöchentlich oder monatlich – mit festem Reinigungsplan, fester Ansprechperson und planbaren Kosten.</p>
-      <span class="svc__more">So funktioniert's ${icon('arrow', 'i i--sm')}</span>
+const serviceRow = s => `
+  <article class="srow reveal">
+    ${s.image ? `<a href="/leistungen/${s.slug}" class="srow__media" tabindex="-1" aria-hidden="true">${picture(s.image, { sizes: '160px' })}</a>` : `<span class="srow__media srow__media--icon">${icon(s.icon)}</span>`}
+    <div class="srow__body">
+      <h3 class="srow__title"><a href="/leistungen/${s.slug}">${s.title}</a></h3>
+      <p>${s.short}</p>
+      <p class="srow__includes">${s.includes.slice(0, 3).join(' · ')}</p>
     </div>
-  </a>`;
-
-const audienceCard = (a, detailed = false) => `
-  <article class="aud reveal">
-    <div class="aud__head">
-      <span class="aud__icon">${icon(a.icon)}</span>
-      <h3 class="aud__title">${a.title}</h3>
-    </div>
-    <p class="aud__text">${a.text}</p>
-    <ul class="checks aud__points">${a.points.map(p => `<li>${icon('check', 'i i--sm')}${p}</li>`).join('')}</ul>
-    ${detailed ? `<div class="aud__services"><p class="aud__label">Passende Leistungen</p><div class="aud__links">${a.services.map(bySlug).map(s => `<a href="/leistungen/${s.slug}">${icon(s.icon, 'i i--sm')} ${s.title}</a>`).join('')}</div></div>` : ''}
+    <a href="/leistungen/${s.slug}" class="srow__arrow" aria-label="${s.title} ansehen">${icon('arrow')}</a>
   </article>`;
 
-const stepList = list => `
-  <ol class="steps">
-    ${list.map(([t, d], i) => `<li class="steps__item reveal"><span class="steps__num">0${i + 1}</span><h3>${t}</h3><p>${d}</p></li>`).join('')}
+const imageTile = ({ title, text, href, image }, h = 'h3', sizes = '(max-width: 760px) 100vw, 50vw') => `
+  <a href="${href}" class="tile reveal">
+    <span class="tile__media">${picture(image, { sizes })}</span>
+    <span class="tile__body">
+      <${h} class="tile__title">${title}</${h}>
+      <span class="tile__text">${text}</span>
+      <span class="tile__more">Mehr erfahren ${icon('arrow', 'i i--sm')}</span>
+    </span>
+  </a>`;
+
+const stepLine = (list, cls = '') => `
+  <ol class="stepline ${cls}">
+    ${list.map(([t, d], i) => `<li class="stepline__item"><span class="stepline__num">${i + 1}</span><div><h3>${t}</h3><p>${d}</p></div></li>`).join('')}
   </ol>`;
 
 const towns = () => `
   <ul class="towns">
-    ${c.towns.map((t, i) => `<li${i === 0 ? ' class="is-home"' : ''}>${i === 0 ? icon('pin', 'i i--sm') + ' ' : ''}${t}</li>`).join('')}
+    ${c.towns.map((t, i) => `<li${i === 0 ? ' class="is-home"' : ''}>${t}</li>`).join('')}
   </ul>`;
 
-const personCard = () => `
-  <aside class="person">
-    <div class="person__avatar" aria-hidden="true">${c.ownerInitials}</div>
-    <div class="person__body">
-      <p class="person__role">${isPlaceholder(c.owner) ? 'Persönlich für Sie da' : `${c.ownerRole} · Ihr Ansprechpartner`}</p>
-      <p class="person__name">${ownerName()}</p>
-      <p class="person__quote">„Bei uns haben Sie eine feste Person, die Ihr Objekt kennt und für Sie erreichbar ist.“</p>
-      <div class="person__links">
-        <a href="${tel}">${icon('phone', 'i i--sm')} ${c.phoneDisplay}</a>
-        <a href="${wa}" target="_blank" rel="noopener">${icon('wa', 'i i--sm')} WhatsApp</a>
+const avatar = (cls = '') => (c.ownerPhoto
+  ? `<img class="avatar ${cls}" src="${c.ownerPhoto}" alt="${ownerName()}" width="96" height="96" loading="lazy">`
+  : `<span class="avatar avatar--initials ${cls}" aria-hidden="true">${c.ownerInitials}</span>`);
+
+const contactList = () => `
+  <ul class="contact-list">
+    <li><a href="${tel}">${icon('phone')}<span><small>Telefon</small>${c.phoneDisplay}</span></a></li>
+    <li><a href="${wa}" target="_blank" rel="noopener" class="is-wa">${icon('wa')}<span><small>WhatsApp</small>Nachricht schreiben</span></a></li>
+    <li><a href="${mail}">${icon('mail')}<span><small>E-Mail</small>${c.email}</span></a></li>
+  </ul>`;
+
+const gallery = () => (c.gallery.length ? `
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>Einblicke in unsere Arbeit</h2>
+        <p class="lead">Aufnahmen aus Objekten, die wir betreuen.</p>
+      </div>
+      <div class="gallery">
+        ${c.gallery.map(g => `<figure class="gallery__item reveal"><img src="${g.src}" alt="${g.alt}" loading="lazy" decoding="async">${g.caption ? `<figcaption>${g.caption}</figcaption>` : ''}</figure>`).join('')}
       </div>
     </div>
-  </aside>`;
-
-const featureLinks = () => `
-  <div class="feature-links">
-    <a href="${audiencePage.path}" class="feature-link feature-link--navy reveal">
-      <span class="feature-link__icon">${icon('building')}</span>
-      <span><b>${audiencePage.title}</b><small>Ein Partner für Gewerbe, Praxen und Wohnanlagen.</small></span>
-      ${icon('arrow', 'i feature-link__arrow')}
-    </a>
-    <a href="${regularPage.path}" class="feature-link reveal">
-      <span class="feature-link__icon">${icon('repeat')}</span>
-      <span><b>${regularPage.title}</b><small>Feste Intervalle, fester Plan, planbare Kosten.</small></span>
-      ${icon('arrow', 'i feature-link__arrow')}
-    </a>
-  </div>`;
+  </section>` : '');
 
 // ── Startseite ──────────────────────────────────────────────
 const home = () => ({
   path: '/', file: 'index.html', active: 'start',
   title: `Gebäudereinigung Bielefeld & OWL | ${c.name}`,
-  description: 'Gebäudereinigung in Bielefeld & OWL: Unterhalts-, Grund- & Bauendreinigung, Treppenhaus, Büro, Glas & Fenster. Kostenlose Besichtigung, Festpreis.',
+  description: 'Gebäudereinigung in Bielefeld & OWL: Treppenhaus, Büro & Praxis, Unterhalts-, Grund- und Glasreinigung. Kostenlose Besichtigung, fester Preis.',
   body: `
   <section class="hero">
-    <svg class="hero__swoosh" viewBox="0 0 900 360" aria-hidden="true"><path d="M-40 300C180 400 700 380 940 90" fill="none" stroke="#1a6fd1" stroke-width="26" stroke-linecap="round"/><path d="M60 345C300 405 720 360 930 180" fill="none" stroke="#4aa52e" stroke-width="14" stroke-linecap="round"/></svg>
     <div class="container hero__grid">
       <div class="hero__content">
-        <p class="pill"><span class="pill__dot"></span> Kostenlose Besichtigung · Festpreis-Angebot</p>
-        <h1 class="hero__title"><span class="hero__kicker">Gebäudereinigung in Bielefeld &amp; OWL</span>Sauber.<br>Zuverlässig.<br><span class="text-green">Professionell.</span></h1>
-        <p class="lead">Laufende Reinigung und Sonderreinigung für Hausverwaltungen, Unternehmen und Praxen in Bielefeld und ganz Ostwestfalen-Lippe – mit fester Ansprechperson und fairen Festpreisen.</p>
+        <h1 class="hero__title"><span class="hero__kicker">${icon('pin', 'i i--sm')} Gebäudereinigung in Bielefeld &amp; OWL</span>Saubere Gebäude. <span class="hero__accent">Weniger Aufwand für Sie.</span></h1>
+        <p class="lead">Wir übernehmen die regelmäßige Reinigung Ihrer Treppenhäuser, Büros und Gewerbeobjekte – mit festen Abläufen und einem direkten Ansprechpartner.</p>
         <div class="actions">
-          <a href="/kontakt" class="btn btn--primary btn--lg">Kostenloses Angebot ${icon('arrow', 'i i--sm')}</a>
-          <a href="/leistungen" class="btn btn--ghost btn--lg">Unsere Leistungen</a>
+          <a href="/kontakt" class="btn btn--primary btn--lg">Kostenloses Angebot anfordern ${icon('arrow', 'i i--sm')}</a>
+          <a href="#leistungen" class="btn btn--ghost btn--lg">Leistungen ansehen</a>
         </div>
-        <div class="hero__contact">
-          <a href="${tel}">${icon('phone', 'i i--sm')} ${c.phoneDisplay}</a>
-          <a href="${wa}" target="_blank" rel="noopener">${icon('wa', 'i i--sm')} WhatsApp schreiben</a>
-        </div>
+        <p class="hero__contact">Lieber direkt? <a href="${tel}">${icon('phone', 'i i--sm')} ${c.phoneDisplay}</a> <a href="${wa}" target="_blank" rel="noopener">${icon('wa', 'i i--sm')} WhatsApp</a></p>
       </div>
+      <figure class="hero__media">
+        ${picture('hero', { sizes: '(max-width: 980px) 100vw, 42vw', eager: true })}
+        <figcaption class="hero__person">
+          ${avatar()}
+          <span><small>Ihr Ansprechpartner</small><b>${ownerName()}</b><a href="${tel}">${c.phoneDisplay}</a></span>
+        </figcaption>
+      </figure>
+    </div>
 
-      <form class="quote" action="/kontakt" method="get">
-        <div class="quote__head">
-          <img src="/assets/logo-mark.png" alt="" width="56" height="38">
-          <div>
-            <p class="quote__title">Angebot anfordern</p>
-            <p class="quote__sub">Kostenlos & unverbindlich</p>
-          </div>
-        </div>
-        <label class="field"><span>Welche Leistung benötigen Sie?</span>
-          <select name="leistung">${serviceOptions()}</select>
-        </label>
-        <label class="field"><span>Art des Objekts</span>
-          <select name="objekt">${options(objectTypes)}</select>
-        </label>
-        <label class="field"><span>PLZ oder Ort</span>
-          <input name="ort" placeholder="z. B. 33602 Bielefeld" autocomplete="postal-code">
-        </label>
-        <button class="btn btn--primary btn--block btn--lg" type="submit">Weiter zur Anfrage ${icon('arrow', 'i i--sm')}</button>
-        <p class="quote__note">${icon('shield', 'i i--sm')} Ihre Angaben nutzen wir nur für Ihr Angebot.</p>
+    <div class="container">
+      <form class="quickbar" id="anfrage" action="/kontakt" method="get" aria-label="Schnellanfrage">
+        <p class="quickbar__label"><b>Schnellanfrage</b><span>In drei Angaben zum Angebot</span></p>
+        <label class="field"><span>Leistung</span><select name="leistung">${serviceOptions()}</select></label>
+        <label class="field"><span>Art des Objekts</span><select name="objekt">${options(objectTypes)}</select></label>
+        <label class="field"><span>PLZ oder Ort</span><input name="ort" placeholder="z. B. 33602 Bielefeld" autocomplete="postal-code"></label>
+        <button class="btn btn--primary btn--lg" type="submit">Weiter ${icon('arrow', 'i i--sm')}</button>
       </form>
     </div>
   </section>
 
-  <section class="trust" aria-label="Unsere Versprechen">
-    <div class="container trust__grid">
-      ${trust.map(([i, t, d]) => `<div class="trust__item"><span class="trust__icon">${icon(i)}</span><div><b>${t}</b><span>${d}</span></div></div>`).join('')}
+  <section class="facts" aria-label="Was Sie bei uns bekommen">
+    <div class="container facts__grid">
+      ${facts.map(([t, d]) => `<div class="facts__item"><b>${icon('check', 'i i--sm')} ${t}</b><span>${d}</span></div>`).join('')}
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" id="leistungen">
     <div class="container">
       <div class="section-head section-head--row">
-        <div>
-          <p class="eyebrow">Leistungen</p>
-          <h2>Alles für ein gepflegtes Objekt</h2>
-        </div>
-        <p class="section-head__text">Einzeln buchbar oder kombiniert – mit einer Ansprechperson und einer Rechnung.</p>
+        <h2>Was wir für Sie übernehmen</h2>
+        <a href="/leistungen" class="link-arrow">Alle Leistungen ${icon('arrow', 'i i--sm')}</a>
       </div>
-      ${serviceGroups.map(g => `
-      <div class="svc-group">
-        <div class="svc-group__head">
-          <h3 class="svc-group__title">${g.title}</h3>
-          <p>${g.text}</p>
-        </div>
-        <div class="svc-grid">
-          ${byGroup(g.id).map(s => serviceCard(s, 'h4')).join('')}
-          ${g.id === 'laufend' ? regularFeatureCard() : ''}
-        </div>
-      </div>`).join('')}
-      <p class="svc-note">Individuelle Anforderungen? <a href="/kontakt">Sprechen Sie uns an</a> – wir finden eine passende Lösung.</p>
+      <div class="tiles">
+        ${homeServices.map(t => imageTile(t)).join('')}
+      </div>
+      <div class="more-services">
+        <p><b>Außerdem:</b> ${['kellerreinigung', 'muelltonnenservice', 'parkhaus-und-parkplatzreinigung', 'bauendreinigung', 'fensterreinigung', 'glasreinigung'].map(bySlug).map(s => `<a href="/leistungen/${s.slug}">${s.title}</a>`).join('<span aria-hidden="true"> · </span>')}</p>
+        <a href="${regularPage.path}" class="more-services__regular">${icon('repeat')} <span><b>Laufende Betreuung gewünscht?</b> Regelmäßige Reinigung im festen Rhythmus</span> ${icon('arrow', 'i i--sm')}</a>
+      </div>
     </div>
   </section>
 
   <section class="section section--soft">
-    <div class="container">
-      <div class="section-head section-head--row">
-        <div>
-          <p class="eyebrow">${audiencePage.title}</p>
-          <h2>Ein Partner für Ihre Objekte</h2>
-        </div>
-        <p class="section-head__text">Ob eine Wohnanlage oder mehrere Standorte – wir übernehmen die Reinigung zuverlässig und planbar.</p>
-      </div>
-      <div class="audience">${audiences.map(a => audienceCard(a)).join('')}</div>
-      <div class="actions actions--center"><a href="${audiencePage.path}" class="btn btn--primary btn--lg">Lösungen für Unternehmen &amp; Hausverwaltungen ${icon('arrow', 'i i--sm')}</a></div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container why">
-      <div class="why__visual reveal">
-        <img src="/assets/logo-full.png" alt="${c.legalName} Logo" width="720" height="482" loading="lazy">
-      </div>
-      <div class="why__content reveal">
-        <p class="eyebrow">Warum ${c.name}</p>
-        <h2>Ein Partner, auf den Sie sich verlassen können.</h2>
-        <p class="muted-lg">Als Bielefelder Unternehmen sind wir schnell vor Ort und kennen die Region. Für uns zählt, dass Sie sich um Sauberkeit nicht mehr kümmern müssen.</p>
-        <ul class="features">
-          <li><span class="features__icon">${icon('user')}</span><div><b>Persönlich statt anonym</b><span>Eine feste Ansprechperson, die Ihr Objekt kennt.</span></div></li>
-          <li><span class="features__icon">${icon('euro')}</span><div><b>Klare Festpreise</b><span>Sie wissen vorher genau, was Sie erwartet.</span></div></li>
-          <li><span class="features__icon">${icon('shield')}</span><div><b>Gründlich & pünktlich</b><span>Feste Abläufe und verbindliche Termine.</span></div></li>
-        </ul>
+    <div class="container story">
+      <figure class="story__media reveal">
+        ${picture('sparrenburg', { sizes: '(max-width: 980px) 100vw, 45vw' })}
+        <figcaption>Die Sparrenburg in Bielefeld</figcaption>
+      </figure>
+      <div class="story__text reveal">
+        <h2>Aus Ostwestfalen. Für Ostwestfalen.</h2>
+        <p class="muted-lg">${c.name} ist ein Reinigungsbetrieb aus Bielefeld. Inhaber ${ownerName()} ist Ihr direkter Ansprechpartner – von der ersten Besichtigung bis zur laufenden Betreuung.</p>
+        <p>Wir arbeiten mit festen Abläufen und klaren Absprachen: Was gereinigt wird, wie oft und zu welchem Preis, steht vorher schriftlich fest.</p>
         <a href="/ueber-uns" class="link-arrow">Mehr über uns ${icon('arrow', 'i i--sm')}</a>
       </div>
     </div>
   </section>
 
-  <section class="section section--soft">
+  <section class="section section--tight">
     <div class="container">
-      <div class="section-head section-head--center">
-        <p class="eyebrow">Ablauf</p>
-        <h2>In vier Schritten zum sauberen Objekt</h2>
+      <div class="section-head">
+        <h2>So kommen Sie zu Ihrem Angebot</h2>
       </div>
-      ${stepList(steps)}
+      ${stepLine(steps)}
     </div>
   </section>
 
-  <section class="section">
-    <div class="container region">
-      <div class="reveal">
-        <p class="eyebrow">Einsatzgebiet</p>
-        <h2>Zuhause in Bielefeld.<br>Im Einsatz in ganz OWL.</h2>
-        <p class="muted-lg">Kurze Wege, schnelle Reaktion: Wir betreuen Objekte in Bielefeld und der Umgebung.</p>
-      </div>
-      <div class="reveal">
-        ${towns()}
-        <p class="small-muted">Ihr Ort ist nicht dabei? <a href="/kontakt">Fragen Sie einfach an.</a></p>
-      </div>
-    </div>
-  </section>
+  ${gallery()}
 
-  ${ctaBand()}`,
+  <section class="contact-end">
+    <div class="container contact-end__grid">
+      <div>
+        <h2>Erzählen Sie uns von Ihrem Objekt.</h2>
+        <p class="muted-lg">Wir melden uns, vereinbaren einen Besichtigungstermin und schicken Ihnen danach ein Angebot mit festem Preis.</p>
+        <p class="contact-end__region">${icon('pin', 'i i--sm')} Im Einsatz in ${c.towns.slice(0, 5).join(', ')} und Umgebung.</p>
+        <a href="/kontakt" class="btn btn--primary btn--lg">Zum Anfrageformular ${icon('arrow', 'i i--sm')}</a>
+      </div>
+      ${contactList()}
+    </div>
+  </section>`,
 });
 
 // ── Leistungen (Übersicht) ──────────────────────────────────
+const groupAnchor = { laufend: 'laufende-reinigung', sonder: 'sonderreinigung' };
 const leistungen = () => ({
   path: '/leistungen', file: 'leistungen/index.html', active: 'leistungen',
   title: `Leistungen der Gebäudereinigung in Bielefeld | ${c.name}`,
@@ -300,36 +267,45 @@ const leistungen = () => ({
   body: `
   ${pageHero({
     crumbs: [['Leistungen']],
-    eyebrow: 'Leistungen',
-    title: 'Reinigung für jedes Objekt',
-    lead: `${services.length} Leistungen, ein Ansprechpartner. Laufend nach festem Plan oder einmalig als Sonderreinigung – einzeln buchbar oder kombiniert.`,
+    title: 'Unsere Leistungen',
+    lead: 'Laufende Reinigung nach festem Plan oder einmalige Sonderreinigung – für Wohnanlagen, Büros, Praxen und Gewerbeobjekte in Bielefeld und Umgebung.',
+    actions: serviceGroups.map(g => `<a href="#${groupAnchor[g.id]}" class="chip-link">${g.title} ${icon('chevron', 'i i--sm')}</a>`).join(''),
   })}
-  ${serviceGroups.map((g, gi) => `
-  <section class="section section--tight${gi % 2 ? ' section--soft' : ''}">
-    <div class="container">
-      <div class="svc-group__head svc-group__head--lg">
-        <h2 class="svc-group__title">${g.title}</h2>
-        <p>${g.text}</p>
+
+  <section class="section" id="${groupAnchor.laufend}">
+    <div class="container split-list">
+      <div class="split-list__intro">
+        <h2>${serviceGroups[0].title}</h2>
+        <p>${serviceGroups[0].text}</p>
+        <a href="${regularPage.path}" class="link-arrow">Wie regelmäßige Reinigung funktioniert ${icon('arrow', 'i i--sm')}</a>
       </div>
-      <div class="svc-list">
-        ${byGroup(g.id).map((s, i) => `
-        <article class="svc-row reveal">
-          <span class="svc-row__num">0${i + 1}</span>
-          <span class="svc-row__icon">${icon(s.icon)}</span>
-          <div class="svc-row__body">
-            <h3 class="svc-row__title"><a href="/leistungen/${s.slug}">${s.title}</a></h3>
-            <p>${s.short}</p>
-            <ul class="checks checks--inline">${s.includes.slice(0, 3).map(x => `<li>${icon('check', 'i i--sm')}${x}</li>`).join('')}</ul>
-          </div>
-          <a href="/leistungen/${s.slug}" class="btn btn--ghost svc-row__btn">Details ${icon('arrow', 'i i--sm')}</a>
-        </article>`).join('')}
+      <div class="srows">${byGroup('laufend').map(serviceRow).join('')}</div>
+    </div>
+  </section>
+
+  <section class="section section--soft" id="${groupAnchor.sonder}">
+    <div class="container">
+      <div class="section-head section-head--row">
+        <div>
+          <h2>${serviceGroups[1].title}</h2>
+          <p class="lead">${serviceGroups[1].text}</p>
+        </div>
+      </div>
+      <div class="tiles tiles--even">
+        ${byGroup('sonder').map(s => imageTile({ title: s.title, text: s.short, href: `/leistungen/${s.slug}`, image: s.image }, 'h3', '(max-width: 760px) 100vw, 50vw')).join('')}
       </div>
     </div>
-  </section>`).join('')}
-  <section class="section section--tight">
-    <div class="container">${featureLinks()}</div>
   </section>
-  ${ctaBand('Mehrere Leistungen kombinieren?', 'Wir stellen Ihnen ein Paket zusammen – mit einer Ansprechperson und einer Rechnung.')}`,
+
+  <section class="section section--tight">
+    <div class="container">
+      <a href="${audiencePage.path}" class="banner-link reveal">
+        <span><b>Sie betreuen mehrere Objekte oder ein Unternehmen?</b> So arbeiten wir mit Hausverwaltungen, Büros und Praxen.</span>
+        ${icon('arrow')}
+      </a>
+    </div>
+  </section>
+  ${ctaBand('Mehrere Leistungen kombinieren?', 'Wir stellen Ihnen ein passendes Paket zusammen – mit einem Ansprechpartner und einer Rechnung.')}`,
 });
 
 // ── Leistungs-Detailseiten ──────────────────────────────────
@@ -345,60 +321,50 @@ const servicePage = s => ({
   body: `
   ${pageHero({
     crumbs: [['Leistungen', '/leistungen'], [s.title]],
-    eyebrow: `${icon(s.icon, 'i i--sm')} ${serviceGroups.find(g => g.id === s.group).title}`,
+    eyebrow: serviceGroups.find(g => g.id === s.group).title,
     title: `${s.title}<span class="h1-sub">in Bielefeld & OWL</span>`,
     lead: s.intro,
-    actions: `<a href="/kontakt?leistung=${s.slug}" class="btn btn--primary btn--lg">Angebot anfragen ${icon('arrow', 'i i--sm')}</a><a href="${tel}" class="btn btn--ghost btn--lg">${icon('phone', 'i i--sm')} ${c.phoneDisplay}</a>`,
+    actions: `<a href="/kontakt?leistung=${s.slug}" class="btn btn--primary btn--lg">Angebot anfordern ${icon('arrow', 'i i--sm')}</a><a href="${tel}" class="btn btn--ghost btn--lg">${icon('phone', 'i i--sm')} ${c.phoneDisplay}</a>`,
+    image: s.image,
   })}
   <section class="section section--tight">
     <div class="container detail">
       <div class="detail__main">
-        <div class="block reveal">
-          <h2 class="block__title">Leistungsumfang</h2>
-          <ul class="checks checks--grid">${s.includes.map(x => `<li>${icon('check', 'i i--sm')}${x}</li>`).join('')}</ul>
-          <p class="small-muted">Der genaue Umfang wird individuell auf Ihr Objekt abgestimmt.</p>
+        <div class="prose-block reveal">
+          <h2>Das gehört dazu</h2>
+          <ul class="checks checks--cols">${s.includes.map(x => `<li>${icon('check', 'i i--sm')}${x}</li>`).join('')}</ul>
+          <p class="small-muted">Den genauen Umfang stimmen wir bei der Besichtigung auf Ihr Objekt ab.</p>
         </div>
-        <div class="block block--split reveal">
+        <div class="prose-block prose-block--split reveal">
           <div>
-            <h2 class="block__title">Ideal für</h2>
+            <h2>Geeignet für</h2>
             <ul class="tags">${s.audience.map(a => `<li>${a}</li>`).join('')}</ul>
           </div>
           <div>
-            <h2 class="block__title">Intervalle</h2>
-            <ul class="tags tags--green">${s.rhythm.map(a => `<li>${icon('calendar', 'i i--sm')} ${a}</li>`).join('')}</ul>
+            <h2>Übliche Intervalle</h2>
+            <ul class="tags tags--green">${s.rhythm.map(a => `<li>${a}</li>`).join('')}</ul>
           </div>
         </div>
         ${s.group === 'laufend' ? `
-        <a href="${regularPage.path}" class="inline-cta reveal">
-          <span class="inline-cta__icon">${icon('repeat')}</span>
-          <span><b>Als regelmäßigen Reinigungsauftrag buchen</b><small>Fester Plan, feste Zeiten, planbare monatliche Kosten.</small></span>
-          ${icon('arrow', 'i inline-cta__arrow')}
+        <a href="${regularPage.path}" class="banner-link banner-link--green reveal">
+          <span><b>Als regelmäßigen Auftrag vergeben?</b> Fester Plan, feste Zeiten, monatliche Pauschale.</span>
+          ${icon('arrow')}
         </a>` : `
-        <a href="${audiencePage.path}" class="inline-cta reveal">
-          <span class="inline-cta__icon">${icon('building')}</span>
-          <span><b>Für Unternehmen &amp; Hausverwaltungen</b><small>Sonderreinigung und laufende Reinigung aus einer Hand.</small></span>
-          ${icon('arrow', 'i inline-cta__arrow')}
+        <a href="${audiencePage.path}" class="banner-link reveal">
+          <span><b>Für Hausverwaltungen und Unternehmen:</b> Sonderreinigung und laufende Reinigung aus einer Hand.</span>
+          ${icon('arrow')}
         </a>`}
-        <div class="block reveal">
-          <h2 class="block__title">So läuft's ab</h2>
-          <ol class="mini-steps">${steps.map(([t, d], i) => `<li><span>${i + 1}</span><div><b>${t}</b><p>${d}</p></div></li>`).join('')}</ol>
-        </div>
-        <div class="block reveal">
-          <h2 class="block__title">Häufige Fragen</h2>
+        <div class="prose-block reveal">
+          <h2>Häufige Fragen</h2>
           ${faqList(s.faq)}
         </div>
       </div>
 
       <aside class="detail__side">
         <div class="side-card">
-          <p class="side-card__eyebrow">Kostenlos & unverbindlich</p>
           <p class="side-card__title">Angebot für ${s.title}</p>
-          <ul class="checks checks--compact">
-            <li>${icon('check', 'i i--sm')}Kostenlose Besichtigung</li>
-            <li>${icon('check', 'i i--sm')}Festpreis-Angebot</li>
-            <li>${icon('check', 'i i--sm')}Feste Ansprechperson</li>
-          </ul>
-          <a href="/kontakt?leistung=${s.slug}" class="btn btn--primary btn--block">Angebot anfragen</a>
+          <p class="side-card__text">Kostenlose Besichtigung, danach ein schriftliches Angebot mit festem Preis.</p>
+          <a href="/kontakt?leistung=${s.slug}" class="btn btn--primary btn--block">Angebot anfordern</a>
           <div class="side-card__or"><span>oder direkt</span></div>
           <a href="${tel}" class="side-card__link">${icon('phone')} <span><small>Anrufen</small>${c.phoneDisplay}</span></a>
           <a href="${wa}" class="side-card__link side-card__link--wa" target="_blank" rel="noopener">${icon('wa')} <span><small>WhatsApp</small>Nachricht schreiben</span></a>
@@ -406,12 +372,11 @@ const servicePage = s => ({
         <nav class="side-nav" aria-label="Weitere Leistungen">
           ${serviceGroups.map(g => `
           <p class="side-nav__title">${g.title}</p>
-          ${byGroup(g.id).filter(x => x.slug !== s.slug).map(x => `<a href="/leistungen/${x.slug}">${icon(x.icon, 'i i--sm')} ${x.title}</a>`).join('')}`).join('')}
+          ${byGroup(g.id).filter(x => x.slug !== s.slug).map(x => `<a href="/leistungen/${x.slug}">${x.title}</a>`).join('')}`).join('')}
         </nav>
       </aside>
     </div>
-  </section>
-  ${ctaBand(`Ihr Angebot für ${s.title}`, 'Kostenlose Besichtigung vor Ort und ein transparenter Festpreis – unverbindlich.')}`,
+  </section>`,
 });
 
 // ── Für Unternehmen & Hausverwaltungen ──────────────────────
@@ -423,69 +388,45 @@ const unternehmen = () => ({
   body: `
   ${pageHero({
     crumbs: [[audiencePage.title]],
-    eyebrow: `${icon('building', 'i i--sm')} ${audiencePage.title}`,
-    title: `Gebäudereinigung für Unternehmen &amp; Hausverwaltungen<span class="h1-sub">in Bielefeld & OWL</span>`,
-    lead: 'Ein fester Partner für die Reinigung Ihrer Objekte: verlässlich, planbar und mit einer Ansprechperson, die Ihre Anforderungen kennt.',
-    actions: `<a href="/kontakt?objekt=${encodeURIComponent('Büro / Gewerbe')}" class="btn btn--primary btn--lg">Angebot anfragen ${icon('arrow', 'i i--sm')}</a><a href="${tel}" class="btn btn--ghost btn--lg">${icon('phone', 'i i--sm')} ${c.phoneDisplay}</a>`,
+    eyebrow: audiencePage.title,
+    title: `Reinigung für Wohnanlagen, Büros und Praxen<span class="h1-sub">in Bielefeld & OWL</span>`,
+    lead: 'Für Hausverwaltungen, Eigentümergemeinschaften, Unternehmen und Praxen: ein fester Ansprechpartner, ein schriftlicher Reinigungsplan und Kosten, die Sie vorher kennen.',
+    actions: `<a href="/kontakt?objekt=${encodeURIComponent('Büro / Gewerbe')}" class="btn btn--primary btn--lg">Besichtigung vereinbaren ${icon('arrow', 'i i--sm')}</a><a href="${tel}" class="btn btn--ghost btn--lg">${icon('phone', 'i i--sm')} ${c.phoneDisplay}</a>`,
   })}
-  <section class="section section--tight">
-    <div class="container">
-      <div class="audience audience--detailed">${audiences.map(a => audienceCard(a, true)).join('')}</div>
+
+  ${audiences.map((a, i) => `
+  <section class="section${i % 2 ? ' section--soft' : ''}" id="${a.id}">
+    <div class="container feature-row${i % 2 ? ' feature-row--reverse' : ''}">
+      <div class="feature-row__media reveal">${picture(a.image, { sizes: '(max-width: 980px) 100vw, 50vw' })}</div>
+      <div class="feature-row__text reveal">
+        <h2>${a.title}</h2>
+        <p class="muted-lg">${a.text}</p>
+        <ul class="checks">${a.points.map(p => `<li>${icon('check', 'i i--sm')}${p}</li>`).join('')}</ul>
+        <p class="feature-row__links"><b>Passende Leistungen:</b> ${a.services.map(bySlug).map(s => `<a href="/leistungen/${s.slug}">${s.title}</a>`).join(', ')}</p>
+      </div>
+    </div>
+  </section>`).join('')}
+
+  <section class="section">
+    <div class="container deliver">
+      <div class="deliver__intro">
+        <h2>Was Sie konkret bekommen</h2>
+        <p>Ob ein Objekt oder mehrere Standorte: Diese Punkte gelten für jeden Auftrag.</p>
+        <a href="${regularPage.path}" class="link-arrow">Wie regelmäßige Reinigung abläuft ${icon('arrow', 'i i--sm')}</a>
+      </div>
+      <dl class="deliver__list">
+        ${deliverables.map(([t, d]) => `<div class="deliver__row reveal"><dt>${t}</dt><dd>${d}</dd></div>`).join('')}
+      </dl>
     </div>
   </section>
 
   <section class="section section--soft">
-    <div class="container">
-      <div class="section-head section-head--center">
-        <p class="eyebrow">Ihre Vorteile</p>
-        <h2>Darauf können Sie sich verlassen</h2>
-      </div>
-      <div class="benefits">
-        ${benefits.map(([i, t, d]) => `<div class="benefit reveal"><span class="benefit__icon">${icon(i)}</span><div><h3>${t}</h3><p>${d}</p></div></div>`).join('')}
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="section-head section-head--row">
-        <div>
-          <p class="eyebrow">Leistungen</p>
-          <h2>Laufend oder bei Bedarf – alles aus einer Hand</h2>
-        </div>
-        <a href="${regularPage.path}" class="link-arrow">Wie regelmäßige Reinigung funktioniert ${icon('arrow', 'i i--sm')}</a>
-      </div>
-      <div class="group-cards">
-        ${serviceGroups.map(g => `
-        <div class="group-card reveal">
-          <h3>${g.title}</h3>
-          <p>${g.text}</p>
-          <div class="group-card__links">${byGroup(g.id).map(s => `<a href="/leistungen/${s.slug}">${icon(s.icon, 'i i--sm')} ${s.title} ${icon('arrow', 'i i--sm group-card__arrow')}</a>`).join('')}</div>
-        </div>`).join('')}
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--soft">
-    <div class="container">
-      <div class="section-head section-head--center">
-        <p class="eyebrow">Ablauf</p>
-        <h2>So starten wir zusammen</h2>
-      </div>
-      ${stepList(steps)}
-    </div>
-  </section>
-
-  <section class="section">
     <div class="container narrow">
-      <div class="section-head section-head--center">
-        <p class="eyebrow">FAQ</p>
-        <h2>Häufige Fragen</h2>
-      </div>
+      <div class="section-head section-head--center"><h2>Häufige Fragen</h2></div>
       ${faqList(b2bFaq)}
     </div>
   </section>
-  ${ctaBand('Lassen Sie uns Ihr Objekt besichtigen.', 'Kostenlos und unverbindlich – danach erhalten Sie ein klares Angebot mit festem Preis.')}`,
+  ${ctaBand('Der erste Schritt: eine kostenlose Besichtigung.', 'Wir sehen uns Ihr Objekt an und schicken Ihnen danach ein Angebot mit festem Preis – unverbindlich.')}`,
 });
 
 // ── Regelmäßige Reinigung ───────────────────────────────────
@@ -497,122 +438,112 @@ const regelmaessig = () => ({
   body: `
   ${pageHero({
     crumbs: [[regularPage.title]],
-    eyebrow: `${icon('repeat', 'i i--sm')} ${regularPage.title}`,
-    title: `Regelmäßige Reinigung im festen Rhythmus<span class="h1-sub">Unterhaltsreinigung in Bielefeld & OWL</span>`,
-    lead: 'Sie legen fest, wie oft – wir sorgen dafür, dass Ihr Objekt dauerhaft gepflegt ist. Mit festem Reinigungsplan, festen Zeiten und planbaren Kosten.',
-    actions: `<a href="/kontakt?rhythmus=W%C3%B6chentlich" class="btn btn--primary btn--lg">Angebot anfragen ${icon('arrow', 'i i--sm')}</a><a href="${tel}" class="btn btn--ghost btn--lg">${icon('phone', 'i i--sm')} ${c.phoneDisplay}</a>`,
+    eyebrow: regularPage.title,
+    title: `Reinigung im festen Rhythmus<span class="h1-sub">Unterhaltsreinigung in Bielefeld & OWL</span>`,
+    lead: 'Sie legen fest, wie oft gereinigt wird – wir kommen zu festen Zeiten, nach schriftlichem Plan und zu einer monatlichen Pauschale.',
+    actions: `<a href="/kontakt?rhythmus=W%C3%B6chentlich" class="btn btn--primary btn--lg">Angebot anfordern ${icon('arrow', 'i i--sm')}</a><a href="${tel}" class="btn btn--ghost btn--lg">${icon('phone', 'i i--sm')} ${c.phoneDisplay}</a>`,
+    image: 'keller',
   })}
-  <section class="section section--tight">
+
+  <section class="section">
     <div class="container">
       <div class="section-head">
-        <p class="eyebrow">Intervalle</p>
-        <h2>Der passende Rhythmus für Ihr Objekt</h2>
+        <h2>Welcher Rhythmus passt?</h2>
+        <p class="lead">Als Orientierung – den tatsächlichen Bedarf klären wir bei der Besichtigung.</p>
       </div>
-      <div class="intervals">
-        ${regularIntervals.map(([value, t, d]) => `
-        <a href="/kontakt?rhythmus=${encodeURIComponent(value)}" class="interval reveal">
-          <span class="interval__icon">${icon('calendar')}</span>
+      <ol class="scale">
+        ${regularIntervals.map(([value, t, d], i) => `
+        <li class="scale__item reveal" style="--step:${i}">
+          <span class="scale__bar" aria-hidden="true"></span>
           <h3>${t}</h3>
           <p>${d}</p>
-          <span class="interval__more">Angebot anfragen ${icon('arrow', 'i i--sm')}</span>
-        </a>`).join('')}
-      </div>
+          <a href="/kontakt?rhythmus=${encodeURIComponent(value)}" class="link-arrow">Anfragen ${icon('arrow', 'i i--sm')}</a>
+        </li>`).join('')}
+      </ol>
     </div>
   </section>
 
   <section class="section section--soft">
-    <div class="container">
-      <div class="section-head section-head--center">
-        <p class="eyebrow">Ablauf</p>
-        <h2>So funktioniert ein Reinigungsauftrag</h2>
+    <div class="container two-col">
+      <div>
+        <h2>So läuft ein Reinigungsauftrag</h2>
+        ${stepLine(regularSteps, 'stepline--vertical')}
       </div>
-      ${stepList(regularSteps)}
+      <div class="two-col__aside">
+        <h2>Typische Leistungen</h2>
+        <ul class="link-list">
+          ${byGroup('laufend').map(s => `<li><a href="/leistungen/${s.slug}">${s.title} ${icon('arrow', 'i i--sm')}</a></li>`).join('')}
+        </ul>
+        <p class="small-muted">Ergänzend nach Bedarf: ${byGroup('sonder').map(s => `<a href="/leistungen/${s.slug}">${s.title}</a>`).join(', ')}.</p>
+      </div>
     </div>
   </section>
 
   <section class="section">
-    <div class="container why">
-      <div class="why__content reveal">
-        <p class="eyebrow">Ihre Vorteile</p>
-        <h2>Einmal geregelt – dauerhaft gepflegt.</h2>
-        <ul class="features">
-          <li><span class="features__icon">${icon('euro')}</span><div><b>Planbare Kosten</b><span>Feste monatliche Pauschale statt Einzelabrechnung.</span></div></li>
-          <li><span class="features__icon">${icon('list')}</span><div><b>Klarer Reinigungsplan</b><span>Schriftlich festgehalten, was wann gereinigt wird.</span></div></li>
-          <li><span class="features__icon">${icon('user')}</span><div><b>Feste Ansprechperson</b><span>Jemand, der Ihr Objekt und Ihre Wünsche kennt.</span></div></li>
-          <li><span class="features__icon">${icon('repeat')}</span><div><b>Flexibel anpassbar</b><span>Intervalle und Umfang wachsen mit Ihrem Bedarf.</span></div></li>
-        </ul>
-      </div>
-      <nav class="side-nav side-nav--card reveal" aria-label="Typische Leistungen">
-        <p class="side-nav__title">Typisch im Reinigungsauftrag</p>
-        ${byGroup('laufend').map(s => `<a href="/leistungen/${s.slug}">${icon(s.icon, 'i i--sm')} ${s.title}</a>`).join('')}
-        <p class="side-nav__title">Ergänzend nach Bedarf</p>
-        ${byGroup('sonder').map(s => `<a href="/leistungen/${s.slug}">${icon(s.icon, 'i i--sm')} ${s.title}</a>`).join('')}
-      </nav>
-    </div>
-  </section>
-
-  <section class="section section--soft">
     <div class="container narrow">
-      <div class="section-head section-head--center">
-        <p class="eyebrow">FAQ</p>
-        <h2>Häufige Fragen</h2>
-      </div>
+      <div class="section-head section-head--center"><h2>Häufige Fragen</h2></div>
       ${faqList(regularFaq)}
     </div>
   </section>
-  ${ctaBand('Ihr Objekt – dauerhaft gepflegt.', 'Wir erstellen Ihnen einen Reinigungsplan mit festem Preis. Kostenlos und unverbindlich.')}`,
+  ${ctaBand('Ihr Objekt im festen Rhythmus betreuen lassen?', 'Nach der Besichtigung erhalten Sie einen Reinigungsplan mit monatlicher Pauschale.')}`,
 });
 
 // ── Über uns ────────────────────────────────────────────────
 const ueberUns = () => ({
   path: '/ueber-uns', file: 'ueber-uns.html', active: 'ueber-uns',
   title: `Über uns – Reinigungsfirma aus Bielefeld | ${c.name}`,
-  description: 'OstWest Glanz ist ein junges Reinigungsunternehmen aus Bielefeld. Persönlich, zuverlässig und mit klaren Festpreisen – für Objekte in ganz OWL.',
+  description: `${c.name} ist ein Reinigungsbetrieb aus Bielefeld, geführt von ${ownerName()}. Direkter Ansprechpartner, feste Abläufe, klare Preise.`,
   schema: [breadcrumb([['Über uns', '/ueber-uns']])],
   body: `
   ${pageHero({
     crumbs: [['Über uns']],
-    eyebrow: 'Über uns',
-    title: 'Aus Ostwestfalen.<br>Für Ostwestfalen.',
-    lead: 'Ein junges Reinigungsunternehmen aus Bielefeld – mit dem Anspruch, es von Anfang an richtig zu machen.',
+    title: `Über ${c.name}`,
+    lead: 'Ein Reinigungsbetrieb aus Bielefeld – mit kurzen Wegen und einem Inhaber, der selbst ansprechbar ist.',
   })}
-  <section class="section section--tight">
-    <div class="container story">
-      <div class="story__text reveal">
-        <h2>Der Name ist Programm</h2>
-        <p class="muted-lg"><b>OstWest</b> steht für Ostwestfalen – unsere Heimat und unser Einsatzgebiet. <b>Glanz</b> für das, was wir hinterlassen.</p>
-        <p>Wir haben ${c.name} gegründet, weil wir überzeugt sind: Gute Gebäudereinigung braucht keine großen Versprechen, sondern Verlässlichkeit, Sorgfalt und einen direkten Draht zum Kunden.</p>
-        <p>Deshalb arbeiten wir mit festen Abläufen, klaren Festpreisen und einer Ansprechperson, die Ihr Objekt kennt.</p>
+
+  <section class="section">
+    <div class="container intro">
+      <div class="intro__person reveal">
+        ${c.ownerPhoto ? `<img class="intro__photo" src="${c.ownerPhoto}" alt="${ownerName()}, Inhaber von ${c.name}" loading="lazy">` : `<div class="intro__monogram" aria-hidden="true"><span>${c.ownerInitials}</span></div>`}
+        <p class="intro__name"><b>${ownerName()}</b><span>Inhaber</span></p>
       </div>
-      ${personCard()}
+      <div class="intro__text reveal">
+        <h2>Wer hinter ${c.name} steht</h2>
+        <p class="muted-lg">${ownerName()} hat ${c.name} in Bielefeld gegründet und ist für Kunden direkt erreichbar – telefonisch, per WhatsApp oder vor Ort beim Besichtigungstermin.</p>
+        <p>Der Name steht für die Region: <b>OstWest</b> für Ostwestfalen, wo wir zu Hause und im Einsatz sind – <b>Glanz</b> für das Ergebnis, das Sie nach der Reinigung sehen sollen.</p>
+        <p>Wir betreuen Wohnanlagen, Büros, Praxen und Gewerbeobjekte – laufend nach festem Plan oder einmalig als Sonderreinigung.</p>
+        <div class="intro__contact">
+          <a href="${tel}">${icon('phone', 'i i--sm')} ${c.phoneDisplay}</a>
+          <a href="${wa}" target="_blank" rel="noopener">${icon('wa', 'i i--sm')} WhatsApp</a>
+        </div>
+      </div>
     </div>
   </section>
 
   <section class="section section--soft">
     <div class="container">
-      <div class="section-head section-head--center">
-        <p class="eyebrow">Unsere Werte</p>
-        <h2>Wofür wir stehen</h2>
-      </div>
-      <div class="values">
-        <div class="value reveal"><span class="value__icon">${icon('clock')}</span><h3>Zuverlässigkeit</h3><p>Vereinbarte Termine sind für uns verbindlich – ohne Wenn und Aber.</p></div>
-        <div class="value reveal"><span class="value__icon">${icon('sparkle')}</span><h3>Sorgfalt</h3><p>Wir reinigen so, wie wir es in unseren eigenen Räumen erwarten würden.</p></div>
-        <div class="value reveal"><span class="value__icon">${icon('handshake')}</span><h3>Fairness</h3><p>Ehrliche Beratung und transparente Festpreise statt versteckter Kosten.</p></div>
-      </div>
+      <div class="section-head"><h2>So arbeiten wir</h2></div>
+      <ol class="principles">
+        ${workingPrinciples.map(([t, d], i) => `<li class="reveal"><span class="principles__num">0${i + 1}</span><h3>${t}</h3><p>${d}</p></li>`).join('')}
+      </ol>
     </div>
   </section>
 
   <section class="section">
-    <div class="container region">
-      <div class="reveal">
-        <p class="eyebrow">Einsatzgebiet</p>
-        <h2>Schnell vor Ort in Bielefeld und Umgebung</h2>
-        <p class="muted-lg">Von unserem Standort in Bielefeld aus betreuen wir Objekte in ganz Ostwestfalen-Lippe.</p>
+    <div class="container">
+      <figure class="wide-figure reveal">
+        ${picture('bielefeld', { sizes: '(max-width: 1240px) 100vw, 1200px' })}
+      </figure>
+      <div class="region">
+        <div>
+          <h2>Unser Einsatzgebiet</h2>
+          <p class="muted-lg">Von Bielefeld aus betreuen wir Objekte in der Stadt und im Umland. Ihr Ort fehlt in der Liste? <a href="/kontakt">Fragen Sie einfach an.</a></p>
+        </div>
+        ${towns()}
       </div>
-      <div class="reveal">${towns()}</div>
     </div>
   </section>
-  ${ctaBand('Lernen wir uns kennen.', 'Wir schauen uns Ihr Objekt kostenlos an und beraten Sie persönlich.')}`,
+  ${ctaBand('Lernen wir uns kennen.', 'Bei der kostenlosen Besichtigung klären wir alle Fragen persönlich vor Ort.')}`,
 });
 
 // ── Kontakt ─────────────────────────────────────────────────
@@ -624,62 +555,70 @@ const kontakt = () => ({
   body: `
   ${pageHero({
     crumbs: [['Kontakt']],
-    eyebrow: 'Kontakt & Angebot',
-    title: 'Ihr kostenloses Angebot',
-    lead: 'Beschreiben Sie kurz Ihr Objekt – wir melden uns schnellstmöglich und vereinbaren einen Besichtigungstermin.',
+    title: 'Angebot anfordern',
+    lead: 'Ein paar Angaben zu Ihrem Objekt genügen. Wir melden uns, vereinbaren einen Besichtigungstermin und schicken Ihnen danach ein Angebot mit festem Preis.',
   })}
   <section class="section section--tight">
     <div class="container contact">
-      <form class="form-card" id="contact-form" action="${c.formEndpoint}" method="post" data-endpoint="${c.formEndpoint}">
-        <div class="hp" aria-hidden="true"><label>Bitte leer lassen<input name="_hp" tabindex="-1" autocomplete="off"></label></div>
-        <input type="hidden" name="_t" value="">
-        <fieldset>
-          <legend><span class="legend__num">1</span> Ihr Objekt</legend>
-          <div class="form-grid">
-            <label class="field"><span>Leistung</span><select name="leistung">${serviceOptions()}</select></label>
-            <label class="field"><span>Art des Objekts</span><select name="objekt">${options(objectTypes)}</select></label>
-            <label class="field"><span>PLZ / Ort</span><input name="ort" autocomplete="postal-code" placeholder="z. B. 33602 Bielefeld"></label>
-            <label class="field"><span>Gewünschter Rhythmus</span><select name="rhythmus">${options(intervals)}</select></label>
+      <div class="contact__main">
+        <form class="form-card" id="contact-form" action="${c.formEndpoint}" method="post" data-endpoint="${c.formEndpoint}">
+          <div class="hp" aria-hidden="true"><label>Bitte leer lassen<input name="_hp" tabindex="-1" autocomplete="off"></label></div>
+          <input type="hidden" name="_t" value="">
+          <fieldset>
+            <legend><span class="legend__num">1</span> Ihr Objekt</legend>
+            <div class="form-grid">
+              <label class="field"><span>Leistung</span><select name="leistung">${serviceOptions()}</select></label>
+              <label class="field"><span>Art des Objekts</span><select name="objekt">${options(objectTypes)}</select></label>
+              <label class="field"><span>PLZ / Ort</span><input name="ort" autocomplete="postal-code" placeholder="z. B. 33602 Bielefeld"></label>
+              <label class="field"><span>Gewünschter Rhythmus</span><select name="rhythmus">${options(intervals)}</select></label>
+              <label class="field field--full"><span>Nachricht <em>(optional)</em></span><textarea name="nachricht" rows="4" placeholder="z. B. Größe des Objekts, Anzahl der Etagen, Besonderheiten"></textarea></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend><span class="legend__num">2</span> Ihre Kontaktdaten</legend>
+            <div class="form-grid">
+              <label class="field"><span>Name <i class="req" aria-hidden="true">*</i></span><input name="name" required autocomplete="name" aria-describedby="err-name"><small class="field__error" id="err-name"></small></label>
+              <label class="field"><span>Firma / Hausverwaltung <em>(optional)</em></span><input name="firma" autocomplete="organization"></label>
+              <label class="field"><span>E-Mail <i class="req" aria-hidden="true">*</i></span><input name="email" type="email" required autocomplete="email" aria-describedby="err-email"><small class="field__error" id="err-email"></small></label>
+              <label class="field"><span>Telefon <em>(optional, für Rückfragen)</em></span><input name="telefon" type="tel" autocomplete="tel" aria-describedby="err-telefon"><small class="field__error" id="err-telefon"></small></label>
+            </div>
+          </fieldset>
+          <div class="privacy-note">
+            <label class="consent"><input type="checkbox" name="consent" required aria-describedby="err-consent"><span>Ich bin einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage verwendet werden. <i class="req" aria-hidden="true">*</i></span></label>
+            <small class="field__error" id="err-consent"></small>
+            <p>Ihre Angaben gehen per verschlüsselter Verbindung direkt an unser Postfach und werden nur für Ihre Anfrage genutzt. Details in der <a href="/datenschutz#kontaktformular">Datenschutzerklärung</a>.</p>
           </div>
-        </fieldset>
-        <fieldset>
-          <legend><span class="legend__num">2</span> Ihre Kontaktdaten</legend>
-          <div class="form-grid">
-            <label class="field"><span>Name *</span><input name="name" required autocomplete="name"></label>
-            <label class="field"><span>Firma / Hausverwaltung <em>(optional)</em></span><input name="firma" autocomplete="organization"></label>
-            <label class="field"><span>Telefon</span><input name="telefon" type="tel" autocomplete="tel"></label>
-            <label class="field"><span>E-Mail *</span><input name="email" type="email" required autocomplete="email"></label>
-            <label class="field field--full"><span>Nachricht <em>(optional)</em></span><textarea name="nachricht" rows="4" placeholder="z. B. Größe des Objekts, Anzahl Etagen, Besonderheiten"></textarea></label>
-          </div>
-        </fieldset>
-        <label class="consent"><input type="checkbox" name="consent" required><span>Ich bin einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage verwendet werden. Mehr in der <a href="/datenschutz">Datenschutzerklärung</a>. *</span></label>
-        <button class="btn btn--primary btn--lg btn--block" type="submit">Anfrage absenden ${icon('arrow', 'i i--sm')}</button>
-        <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
-      </form>
-      <div class="form-success" id="form-success" hidden tabindex="-1">
-        <span class="form-success__icon">${icon('check')}</span>
-        <h2>Vielen Dank für Ihre Anfrage!</h2>
-        <p>Ihre Nachricht ist bei uns eingegangen. Wir melden uns schnellstmöglich bei Ihnen und vereinbaren einen Termin.</p>
-        <p class="small-muted">Eilig? Rufen Sie uns direkt an: <a href="${tel}">${c.phoneDisplay}</a></p>
+          <button class="btn btn--primary btn--lg btn--block" type="submit">Anfrage senden ${icon('arrow', 'i i--sm')}</button>
+          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+          <p class="form-hint"><i class="req" aria-hidden="true">*</i> Pflichtfeld</p>
+        </form>
+        <div class="form-success" id="form-success" hidden tabindex="-1">
+          <span class="form-success__icon">${icon('check')}</span>
+          <h2>Vielen Dank – Ihre Anfrage ist angekommen.</h2>
+          <p>Wir melden uns bei Ihnen, um einen Besichtigungstermin zu vereinbaren.</p>
+          <p class="small-muted">Eilig? Rufen Sie direkt an: <a href="${tel}">${c.phoneDisplay}</a></p>
+        </div>
       </div>
 
       <aside class="contact__side">
         <div class="contact-card">
-          <p class="contact-card__title">Lieber direkt?</p>
-          <a href="${wa}" class="contact-opt contact-opt--wa" target="_blank" rel="noopener">${icon('wa')}<span><b>WhatsApp</b>Schnellste Antwort</span>${icon('arrow', 'i i--sm contact-opt__arrow')}</a>
-          <a href="${tel}" class="contact-opt">${icon('phone')}<span><b>${c.phoneDisplay}</b>${c.hours}</span>${icon('arrow', 'i i--sm contact-opt__arrow')}</a>
-          <a href="${mail}" class="contact-opt">${icon('mail')}<span><b>${c.email}</b>Wir antworten zeitnah</span>${icon('arrow', 'i i--sm contact-opt__arrow')}</a>
+          <div class="contact-card__person">
+            ${avatar()}
+            <p><small>Ihr Ansprechpartner</small><b>${ownerName()}</b></p>
+          </div>
+          ${contactList()}
+          <dl class="contact-card__meta">
+            <div><dt>Erreichbar</dt><dd>${c.hours}</dd></div>
+            <div><dt>Anschrift</dt><dd>${c.street}, ${c.zip} ${c.city}</dd></div>
+            <div><dt>Einsatzgebiet</dt><dd>${c.region.replace(' · ', ', ')}</dd></div>
+          </dl>
         </div>
-        ${personCard()}
       </aside>
     </div>
   </section>
   <section class="section section--soft">
     <div class="container narrow">
-      <div class="section-head section-head--center">
-        <p class="eyebrow">FAQ</p>
-        <h2>Häufige Fragen</h2>
-      </div>
+      <div class="section-head section-head--center"><h2>Häufige Fragen</h2></div>
       ${faqList(generalFaq)}
     </div>
   </section>`,
@@ -725,10 +664,10 @@ const impressum = () => legalPage({
       <p><b>${c.legalName}</b><br>Inhaber: ${owner()}<br>${address()}<br>Deutschland</p>`],
     ['kontakt', 'Kontakt', `
       <p>Telefon: ${telLink}<br>E-Mail: ${mailLink}</p>`],
-    ['umsatzsteuer', 'Umsatzsteuer-ID', `
-      <p>Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz:<br>${ph(c.vatId)}</p>`],
-    ['berufsangaben', 'Berufsbezeichnung und Kammer', `
-      <p>Tätigkeit: Gebäudereinigung<br>Zuständige Kammer: ${ph(c.chamber)}</p>`],
+    ...(c.vatId ? [['umsatzsteuer', 'Umsatzsteuer-ID', `
+      <p>Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz:<br>${c.vatId}</p>`]] : []),
+    ['berufsangaben', c.chamber ? 'Berufsbezeichnung und Kammer' : 'Berufsbezeichnung', `
+      <p>Tätigkeit: Gebäudereinigung${c.chamber ? `<br>Zuständige Kammer: ${c.chamber}` : ''}</p>`],
     ['verantwortlich', 'Verantwortlich für den Inhalt', `
       <p>Gemäß § 18 Abs. 2 MStV:<br>${owner()}, ${address(', ')}</p>`],
     ['streitbeilegung', 'Verbraucherstreitbeilegung', `

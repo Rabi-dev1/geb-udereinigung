@@ -20,6 +20,9 @@ npm run build   # erzeugt die fertige Seite in dist/
 | Header, Footer, Navigation | `src/layout.js` |
 | Design | `public/assets/site.css` |
 | Logo, Bilder, Schriften | `public/assets/` |
+| Fotos (Alt-Texte, Nachweise) | `src/images.js` – Details und Austausch-Anleitung in `BILDER.md` |
+| Inhaberfoto | `src/data.js` → `ownerPhoto` |
+| Arbeitsbeispiele (Galerie) | `src/data.js` → `gallery` – erscheint erst, wenn Bilder eingetragen sind |
 
 Der Build listet alle noch offenen Platzhalter auf.
 

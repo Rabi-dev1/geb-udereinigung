@@ -1,5 +1,6 @@
 import { company as c, services, serviceGroups, audiencePage, regularPage } from './data.js';
 import { icon } from './icons.js';
+import { picture } from './images.js';
 
 export const tel = `tel:${c.phone}`;
 export const wa = `https://wa.me/${c.whatsapp}`;
@@ -114,19 +115,16 @@ const header = active => {
   </div>`;
 };
 
-export const ctaBand = (title = 'Lassen Sie uns über Ihr Objekt sprechen.', text = 'Kostenlose Besichtigung und ein unverbindliches Festpreis-Angebot – ganz ohne Risiko.') => `
+export const ctaBand = (title = 'Lassen Sie uns über Ihr Objekt sprechen.', text = 'Wir sehen uns Ihr Objekt kostenlos an und schicken Ihnen danach ein Angebot mit festem Preis.') => `
   <section class="cta">
-    <div class="container">
-      <div class="cta__box">
-        <svg class="cta__swoosh" viewBox="0 0 600 240" aria-hidden="true"><path d="M-20 200C120 260 460 250 640 60" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round"/><path d="M40 230C200 270 480 240 620 120" fill="none" stroke="#4aa52e" stroke-width="12" stroke-linecap="round" opacity=".8"/></svg>
-        <div class="cta__text">
-          <h2>${title}</h2>
-          <p>${text}</p>
-        </div>
-        <div class="cta__actions">
-          <a href="/kontakt" class="btn btn--white btn--lg">Angebot anfragen ${icon('arrow', 'i i--sm')}</a>
-          <a href="${tel}" class="btn btn--outline-white btn--lg">${icon('phone', 'i i--sm')} ${c.phoneDisplay}</a>
-        </div>
+    <div class="container cta__inner">
+      <div class="cta__text">
+        <h2>${title}</h2>
+        <p>${text}</p>
+      </div>
+      <div class="cta__actions">
+        <a href="/kontakt" class="btn btn--white btn--lg">Angebot anfordern ${icon('arrow', 'i i--sm')}</a>
+        <a href="${tel}" class="cta__phone">${icon('phone')}<span><small>Oder direkt anrufen</small>${c.phoneDisplay}</span></a>
       </div>
     </div>
   </section>`;
@@ -135,32 +133,33 @@ const footer = () => `
   <footer class="footer">
     <div class="container footer__grid">
       <div class="footer__brand">
-        <img src="/assets/logo-full-white.png" alt="${c.legalName}" width="190" height="127" loading="lazy">
-        <p>${c.tagline}<br>Ihr Partner für Gebäudereinigung in Bielefeld und OWL.</p>
-      </div>
-      ${serviceGroups.map(g => `
-      <div>
-        <h3 class="footer__title">${g.title}</h3>
-        <ul class="footer__list">${services.filter(s => s.group === g.id).map(s => `<li><a href="/leistungen/${s.slug}">${s.title}</a></li>`).join('')}</ul>
-      </div>`).join('')}
-      <div>
-        <h3 class="footer__title">Unternehmen</h3>
-        <ul class="footer__list">
-          <li><a href="${audiencePage.path}">${audiencePage.title}</a></li>
-          <li><a href="${regularPage.path}">${regularPage.title}</a></li>
-          <li><a href="/leistungen">Alle Leistungen</a></li>
-          <li><a href="/ueber-uns">Über uns</a></li>
-          <li><a href="/kontakt">Kontakt & Angebot</a></li>
-        </ul>
+        <img src="/assets/logo-full-white.png" alt="${c.legalName}" width="170" height="114" loading="lazy">
+        <p>Gebäudereinigung in Bielefeld und Ostwestfalen-Lippe.</p>
       </div>
       <div>
         <h3 class="footer__title">Kontakt</h3>
         <ul class="footer__list footer__list--icons">
           <li>${icon('phone')}<a href="${tel}">${c.phoneDisplay}</a></li>
           <li>${icon('mail')}<a href="${mail}">${c.email}</a></li>
-          <li>${icon('wa')}<a href="${wa}" target="_blank" rel="noopener">WhatsApp schreiben</a></li>
-          <li>${icon('clock')}<span>${c.hours}</span></li>
-          <li>${icon('pin')}<span>${isPlaceholder(c.street) ? `${c.city} &amp; Umgebung · OWL` : `${c.street}<br>${c.zip} ${c.city}`}</span></li>
+          <li>${icon('wa')}<a href="${wa}" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li>${icon('pin')}<span>${isPlaceholder(c.street) ? `${c.city} &amp; Umgebung` : `${c.street}, ${c.zip} ${c.city}`}</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__title">Leistungen</h3>
+        <ul class="footer__list">
+          <li><a href="/leistungen#laufende-reinigung">Laufende Reinigung</a></li>
+          <li><a href="/leistungen#sonderreinigung">Sonder- &amp; Intensivreinigung</a></li>
+          <li><a href="${regularPage.path}">${regularPage.title}</a></li>
+          <li><a href="${audiencePage.path}">${audiencePage.title}</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__title">Unternehmen</h3>
+        <ul class="footer__list">
+          <li><a href="/ueber-uns">Über uns</a></li>
+          <li><a href="/kontakt">Kontakt &amp; Anfrage</a></li>
+          <li><span class="footer__muted">${c.hours}</span></li>
         </ul>
       </div>
     </div>
@@ -176,18 +175,17 @@ const footer = () => `
     <a href="/kontakt" class="mbar__cta">${icon('file')}<span>Angebot</span></a>
   </div>`;
 
-export const pageHero = ({ crumbs = [], title, lead, eyebrow, actions = '', aside = '' }) => `
-  <section class="page-hero">
-    <svg class="page-hero__swoosh" viewBox="0 0 600 240" aria-hidden="true"><path d="M-20 200C120 260 460 250 640 60" fill="none" stroke="#1a6fd1" stroke-width="18" stroke-linecap="round"/><path d="M40 230C200 270 480 240 620 120" fill="none" stroke="#4aa52e" stroke-width="10" stroke-linecap="round"/></svg>
-    <div class="container page-hero__inner${aside ? ' page-hero__inner--aside' : ''}">
-      <div>
-        ${crumbs.length ? `<nav class="crumbs" aria-label="Brotkrumen"><a href="/">Start</a>${crumbs.map(([label, href]) => href ? `<span>/</span><a href="${href}">${label}</a>` : `<span>/</span><span aria-current="page">${label}</span>`).join('')}</nav>` : ''}
+export const pageHero = ({ crumbs = [], title, lead, eyebrow, actions = '', image = '' }) => `
+  <section class="page-hero${image ? ' page-hero--media' : ''}">
+    <div class="container page-hero__inner">
+      <div class="page-hero__text">
+        ${crumbs.length ? `<nav class="crumbs" aria-label="Brotkrumen"><a href="/">Start</a>${crumbs.map(([label, href]) => href ? `<span aria-hidden="true">/</span><a href="${href}">${label}</a>` : `<span aria-hidden="true">/</span><span aria-current="page">${label}</span>`).join('')}</nav>` : ''}
         ${eyebrow ? `<p class="eyebrow">${eyebrow}</p>` : ''}
         <h1>${title}</h1>
         ${lead ? `<p class="lead">${lead}</p>` : ''}
         ${actions ? `<div class="actions">${actions}</div>` : ''}
       </div>
-      ${aside}
+      ${image ? `<div class="page-hero__media">${picture(image, { sizes: '(max-width: 980px) 100vw, 45vw', eager: true })}</div>` : ''}
     </div>
   </section>`;
 

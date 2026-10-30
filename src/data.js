@@ -7,8 +7,9 @@ export const company = {
   name: 'OstWest Glanz',
   legalName: 'OstWest Glanz Gebäudereinigung',
   tagline: 'Sauber. Zuverlässig. Professionell.',
-  owner: '[Vorname Nachname]',
-  ownerInitials: 'OG',
+  owner: 'Nechirvan Ismael',
+  ownerInitials: 'NI',
+  ownerPhoto: '',                   // z. B. '/assets/img/inhaber.webp' – sobald ein echtes Foto vorliegt
   ownerRole: 'Inhaber',
 
   phone: '+4917671216622',         // für tel:-Links, ohne Leerzeichen
@@ -16,14 +17,14 @@ export const company = {
   whatsapp: '4917671216622',        // für wa.me – Ländervorwahl ohne +
   email: 'info@ostwestglanz.de',
 
-  street: '[Straße Hausnummer]',
-  zip: '[PLZ]',
+  street: 'Helmholtzstraße 12',
+  zip: '33607',
   city: 'Bielefeld',
   hours: 'Mo–Fr 07:00–18:00 Uhr',
 
   // Rechtliches (Impressum)
-  vatId: '[USt-IdNr. gemäß § 27a UStG – oder Hinweis auf Kleinunternehmerregelung]',
-  chamber: '[ggf. zuständige Handwerkskammer, z. B. Handwerkskammer Ostwestfalen-Lippe zu Bielefeld]',
+  vatId: '',                        // USt-IdNr. eintragen, sobald vorhanden – leer = Abschnitt wird ausgeblendet
+  chamber: '',                      // ggf. zuständige Handwerkskammer – leer = Zeile wird ausgeblendet
   legalUpdated: 'Oktober 2026',
 
   region: 'Bielefeld & Umgebung · OWL',
@@ -33,6 +34,11 @@ export const company = {
   siteUrl: 'https://www.ostwestglanz.de',
   // Serverseitiger Versand der Kontaktanfragen (siehe api/contact.js)
   formEndpoint: '/api/contact',
+
+  // Arbeitsbeispiele: NUR echte Fotos eigener Arbeiten/Objekte (mit Erlaubnis des Kunden).
+  // Solange die Liste leer ist, wird der Bereich nicht angezeigt.
+  // Beispiel: { src: '/assets/img/arbeit-treppenhaus-1.webp', alt: 'Treppenhaus nach der Unterhaltsreinigung', caption: 'Treppenhausreinigung, Bielefeld-Mitte' }
+  gallery: [],
 };
 
 export const objectTypes = ['Mehrfamilienhaus / Wohnanlage', 'Büro / Gewerbe', 'Arztpraxis', 'Ladenlokal', 'Neubau / Baustelle', 'Parkhaus / Parkplatz', 'Sonstiges'];
@@ -47,6 +53,7 @@ export const services = [
   // ── Laufende Reinigung ──
   {
     slug: 'treppenhausreinigung',
+    image: 'treppenhaus',
     group: 'laufend',
     icon: 'stairs',
     title: 'Treppenhausreinigung',
@@ -69,6 +76,7 @@ export const services = [
   },
   {
     slug: 'buero-und-praxisreinigung',
+    image: 'buero',
     group: 'laufend',
     icon: 'office',
     title: 'Büro- und Praxisreinigung',
@@ -92,6 +100,7 @@ export const services = [
   },
   {
     slug: 'gebaeudereinigung',
+    image: 'gebaeude',
     group: 'laufend',
     icon: 'sparkle',
     title: 'Allgemeine Gebäudereinigung',
@@ -114,6 +123,7 @@ export const services = [
   },
   {
     slug: 'kellerreinigung',
+    image: 'keller',
     group: 'laufend',
     icon: 'cellar',
     title: 'Kellerreinigung',
@@ -136,6 +146,7 @@ export const services = [
   },
   {
     slug: 'muelltonnenservice',
+    image: 'hausverwaltung',
     group: 'laufend',
     icon: 'bin',
     title: 'Mülltonnenservice',
@@ -157,6 +168,7 @@ export const services = [
   },
   {
     slug: 'parkhaus-und-parkplatzreinigung',
+    image: 'parkhaus',
     group: 'laufend',
     icon: 'parking',
     title: 'Parkhaus- und Parkplatzreinigung',
@@ -181,6 +193,7 @@ export const services = [
   // ── Sonder- & Intensivreinigung ──
   {
     slug: 'grundreinigung',
+    image: 'sonderreinigung',
     group: 'sonder',
     icon: 'bucket',
     title: 'Grundreinigung',
@@ -203,6 +216,7 @@ export const services = [
   },
   {
     slug: 'bauendreinigung',
+    image: 'bauend',
     group: 'sonder',
     icon: 'helmet',
     title: 'Bauendreinigung',
@@ -225,6 +239,7 @@ export const services = [
   },
   {
     slug: 'fensterreinigung',
+    image: 'fenster',
     group: 'sonder',
     icon: 'window',
     title: 'Fensterreinigung',
@@ -246,6 +261,7 @@ export const services = [
   },
   {
     slug: 'glasreinigung',
+    image: 'glas',
     group: 'sonder',
     icon: 'glass',
     title: 'Glasreinigung',

@@ -50,7 +50,20 @@ if (form) {
   const fallback = 'Ihre Anfrage konnte gerade nicht gesendet werden. Bitte versuchen Sie es später erneut oder rufen Sie uns an.';
 
   const setStatus = (type, text) => { status.className = `form-status is-${type}`; status.textContent = text; };
-  const markInvalid = (el, invalid) => (el.closest('.field') || el.closest('.consent'))?.classList.toggle('is-invalid', invalid);
+  const messages = {
+    name: 'Bitte geben Sie Ihren Namen an.',
+    email: 'Bitte geben Sie eine gültige E-Mail-Adresse an, damit wir antworten können.',
+    telefon: 'Bitte prüfen Sie die Telefonnummer.',
+    consent: 'Bitte stimmen Sie zu, damit wir Ihre Anfrage bearbeiten dürfen.',
+  };
+  // Fehler direkt am Feld anzeigen (Text + Markierung + aria-invalid)
+  const markInvalid = (el, invalid, text) => {
+    (el.closest('.field') || el.closest('.consent'))?.classList.toggle('is-invalid', invalid);
+    el.setAttribute('aria-invalid', invalid);
+    const msg = document.getElementById(`err-${el.name}`);
+    if (msg) msg.textContent = invalid ? (text || messages[el.name] || 'Bitte prüfen Sie diese Angabe.') : '';
+  };
+  const clearField = el => { if (el?.name && el.getAttribute('aria-invalid') === 'true') markInvalid(el, false); };
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
@@ -64,7 +77,7 @@ if (form) {
     }
     if (first) {
       first.focus();
-      return setStatus('error', 'Bitte füllen Sie die markierten Pflichtfelder aus.');
+      return setStatus('error', 'Bitte prüfen Sie die markierten Angaben.');
     }
 
     const data = Object.fromEntries(new FormData(form));
@@ -74,6 +87,7 @@ if (form) {
     button.disabled = true;
     button.textContent = 'Wird gesendet …';
     setStatus('info', '');
+    form.querySelectorAll('[aria-invalid="true"]').forEach(el => markInvalid(el, false));
 
     try {
       const res = await fetch(form.dataset.endpoint, {
@@ -83,7 +97,7 @@ if (form) {
       });
       const result = await res.json().catch(() => ({}));
       if (!res.ok || !result.ok) {
-        for (const name of Object.keys(result.fields || {})) if (form.elements[name]) markInvalid(form.elements[name], true);
+        for (const [name, text] of Object.entries(result.fields || {})) if (form.elements[name]) markInvalid(form.elements[name], true, text);
         throw new Error(result.error || fallback);
       }
       form.hidden = true;
@@ -99,6 +113,6 @@ if (form) {
     }
   });
 
-  form.addEventListener('input', e => e.target.closest('.is-invalid')?.classList.remove('is-invalid'));
-  form.addEventListener('change', e => e.target.closest('.is-invalid')?.classList.remove('is-invalid'));
+  form.addEventListener('input', e => clearField(e.target));
+  form.addEventListener('change', e => clearField(e.target));
 }
